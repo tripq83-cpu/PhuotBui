@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Du Lịch Bụi Không Biên Giới - Phượt Thiện</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <style>
+        :root { --primary-color: #e67e22; --secondary-color: #2c3e50; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background: #f4f6f8; color: #333; }
+        header { background: var(--primary-color); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 1.2rem; }
+        .container { padding: 15px; }
+        .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .card img { width: 100%; border-radius: 8px; height: 180px; object-fit: cover; }
+        .btn { background: var(--primary-color); color: white; border: none; padding: 10px 15px; border-radius: 5px; width: 100%; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 10px; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); }
+        .user-profile { display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 10px 15px; border-bottom: 1px solid #ddd; }
+        .badge { background: #e74c3c; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <div class="user-profile" id="user-box">
+        <span id="username-display">Đang tải thông tin...</span>
+        <button onclick="loginPi()" class="btn-outline" style="width: auto; padding: 5px 10px;">Xác thực Pi</button>
+    </div>
+
+    <header>DU LỊCH BỤI KHÔNG BIÊN GIỚI</header>
+
+    <div class="container">
+        <div class="card">
+            <h3>Chương Trình Phượt Thiện Mới Nhất</h3>
+            <div style="background:#eee; height:150px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#777;">
+                [Hình ảnh chuyến đi cứu trợ / áo ấm vùng cao]
+            </div>
+            <h4>Hành Trình Mang Nắng Đến Vùng Cao</h4>
+            <p><strong>Thời gian:</strong> 25/12/2026</p>
+            <p><strong>Mục tiêu:</strong> Tặng 100 phần quà & sửa điểm trường.</p>
+            <button class="btn" onclick="registerTrip()">Đăng Ký Tham Gia</button>
+            <button class="btn btn-outline" onclick="donatePi()">Ủng Hộ Chuyến Đi (Pi)</button>
+        </div>
+
+        <div class="card">
+            <h3>Địa Điểm Cần Cứu Trợ / Hỗ Trợ</h3>
+            <p>Danh sách các điểm khảo sát thực tế từ cộng đồng phượt thủ.</p>
+            <ul>
+                <li>Điểm trường Bản X - Cần áo ấm & sách vở</li>
+                <li>Cầu dân sinh Huyện Y - Cần gia cố vật liệu</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const Pi = window.Pi;
+        Pi.init({ version: "2.0", sandbox: true });
+
+        async function loginPi() {
+            try {
+                const scopes = ['username', 'payments'];
+                function onIncompletePaymentFound(payment) { }
+                const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+                document.getElementById('username-display').innerText = "Chào, " + auth.user.username;
+            } catch (err) {
+                console.error("Lỗi xác thực Pi:", err);
+                alert("Không thể kết nối tài khoản Pi.");
+            }
+        }
+
+        async function donatePi() {
+            try {
+                const payment = await Pi.createPayment({
+                    amount: 1,
+                    memo: "Ủng hộ chuyến phượt thiện vùng cao",
+                    metadata: { type: "donation" }
+                }, {
+                    onReadyForServerApproval: function(paymentId) { },
+                    onReadyForServerCompletion: function(paymentId, txid) {
+                        alert("Cảm ơn bạn đã đóng góp cho chuyến phượt thiện!");
+                    },
+                    onCancel: function(paymentId) { },
+                    onError: function(error, payment) { }
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function registerTrip() {
+            alert("Đăng ký thành công! Trưởng đoàn sẽ liên hệ xác nhận lịch trình.");
+        }
+    </script>
+</body>
+</html>
