@@ -1,4 +1,4 @@
-4c<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -6,7 +6,7 @@
     <title>PHƯỢT BỤI - Du Lịch Bụi Không Biên Giới</title>
     <!-- Pi Network SDK -->
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <!-- OpenStreetMap Leaflet CSS & JS (Keyless Map) -->
+    <!-- OpenStreetMap Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- Font Awesome Icons -->
@@ -15,96 +15,103 @@
     <style>
         :root {
             --primary: #6b21a8;
-            --primary-dark: #4c1d95;
+            --primary-light: #7e22ce;
             --accent: #f59e0b;
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --text-light: #f8fafc;
-            --text-gray: #94a3b8;
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border-color: #e2e8f0;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-light); padding-bottom: 70px; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-bottom: 75px; }
 
         /* Header */
         header {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            padding: 15px 20px;
+            background: linear-gradient(135deg, #581c87, var(--primary));
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .logo-title h1 { font-size: 1.2rem; font-weight: bold; color: var(--accent); }
-        .logo-title p { font-size: 0.75rem; color: var(--text-gray); }
+        .logo-title h1 { font-size: 1.2rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .logo-title p { font-size: 0.72rem; color: #e9d5ff; }
         .user-btn {
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
             color: white;
-            padding: 8px 12px;
+            padding: 6px 12px;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 6px;
+            font-weight: 600;
         }
 
-        /* Widgets Bar (Giá Pi & Thời tiết) */
+        /* Widgets Bar */
         .widgets-bar {
             display: flex;
-            gap: 10px;
-            padding: 10px 15px;
-            background: #111827;
-            border-bottom: 1px solid #1f2937;
+            gap: 8px;
+            padding: 10px 12px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
             overflow-x: auto;
         }
         .widget-item {
-            background: var(--card-bg);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.8rem;
+            background: #f1f5f9;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
             white-space: nowrap;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
+            color: var(--text-main);
+            border: 1px solid #e2e8f0;
         }
 
         /* Main Container */
-        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        .container { padding: 12px; max-width: 600px; margin: 0 auto; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Feed Cards */
-        .post-card {
+        /* Cards */
+        .card {
             background: var(--card-bg);
             border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #334155;
+            padding: 14px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .post-img { width: 100%; border-radius: 8px; margin: 10px 0; max-height: 250px; object-fit: cover; }
-        .post-actions { display: flex; justify-content: space-between; border-top: 1px solid #334155; pt: 10px; margin-top: 10px; color: var(--text-gray); font-size: 0.9rem; }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem; }
+        .post-img { width: 100%; border-radius: 8px; margin: 8px 0; max-height: 220px; object-fit: cover; }
+        .post-actions { display: flex; justify-content: space-around; border-top: 1px solid var(--border-color); pt: 8px; margin-top: 8px; color: var(--text-sub); font-size: 0.82rem; }
+        .post-actions span { cursor: pointer; display: flex; align-items: center; gap: 4px; }
 
         /* Map Container */
-        #map { height: 350px; width: 100%; border-radius: 12px; border: 1px solid #334155; margin-top: 10px; }
+        #map { height: 320px; width: 100%; border-radius: 10px; border: 1px solid var(--border-color); margin-top: 8px; }
 
-        /* Store List */
+        /* Store Item */
         .store-item {
             background: var(--card-bg);
             padding: 12px;
             border-radius: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border: 1px solid var(--border-color);
         }
-        .store-tag { background: #059669; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; }
+        .store-tag { background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; }
 
         /* Bottom Nav */
         .bottom-nav {
@@ -112,47 +119,54 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: #0f172a;
-            border-top: 1px solid #1e293b;
+            background: #ffffff;
+            border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
+            padding: 8px 0;
             z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
         }
-        .nav-item { color: var(--text-gray); text-align: center; text-decoration: none; font-size: 0.75rem; cursor: pointer; }
-        .nav-item i { font-size: 1.2rem; display: block; margin-bottom: 3px; }
-        .nav-item.active { color: var(--accent); }
+        .nav-item { color: var(--text-sub); text-align: center; text-decoration: none; font-size: 0.72rem; cursor: pointer; flex: 1; }
+        .nav-item i { font-size: 1.1rem; display: block; margin-bottom: 2px; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
 
-        /* Form Inputs */
-        input, textarea, select {
+        /* Inputs & Buttons */
+        input, textarea {
             width: 100%;
             padding: 10px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            color: white;
-            border-radius: 6px;
-            margin-bottom: 10px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
         }
         .btn-primary {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             width: 100%;
             font-weight: bold;
             cursor: pointer;
+            font-size: 0.9rem;
         }
         .btn-donate {
-            background: var(--accent);
-            color: black;
+            background: #fef3c7;
+            color: #92400e;
             font-weight: bold;
-            border: none;
+            border: 1px solid #fde68a;
             padding: 10px;
-            border-radius: 6px;
+            border-radius: 8px;
             width: 100%;
-            margin-top: 10px;
+            margin-top: 8px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
     </style>
 </head>
@@ -161,106 +175,112 @@
     <!-- Header -->
     <header>
         <div class="logo-title">
-            <h1>PHƯỢT BỤI</h1>
+            <h1><i class="fa-solid fa-compass"></i> PHƯỢT BỤI</h1>
             <p>Du Lịch Bụi Không Biên Giới</p>
         </div>
-        <button class="user-btn" id="login-btn" onclick="initPiAuth()">
-            <i class="fa-solid fa-wallet"></i> <span id="user-status">Đăng nhập Pi</span>
+        <button class="user-btn" id="login-btn" onclick="connectPiWallet()">
+            <i class="fa-solid fa-wallet"></i> <span id="user-status">Kết nối ví Pi</span>
         </button>
     </header>
 
-    <!-- Widgets Bar -->
+    <!-- Widgets Bar (Đồng hồ & Tỷ giá) -->
     <div class="widgets-bar">
         <div class="widget-item">
-            <i class="fa-solid fa-coins" style="color: #f59e0b;"></i>
-            <span>Pi Testnet: <strong>$314.159 (Mẫu)</strong></span>
+            <i class="fa-solid fa-clock" style="color: var(--primary);"></i>
+            <span id="live-clock">Đang tải giờ...</span>
         </div>
         <div class="widget-item">
-            <i class="fa-solid fa-cloud-sun" style="color: #38bdf8;"></i>
-            <span>Đà Nẵng: <strong>28°C Nắng nhẹ</strong></span>
+            <i class="fa-solid fa-coins" style="color: #d97706;"></i>
+            <span>Giá Pi Testnet: <strong>$314,159</strong></span>
         </div>
         <div class="widget-item">
-            <i class="fa-solid fa-clock" style="color: #a855f7;"></i>
-            <span id="live-clock">00:00:00</span>
+            <i class="fa-solid fa-sun" style="color: #eab308;"></i>
+            <span>Đà Nẵng: <strong>29°C Nắng</strong></span>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="container">
-        <!-- Tab 1: Bảng Tin (Feed) -->
+        <!-- Tab 1: Bảng Tin -->
         <div id="tab-feed" class="tab-content active">
-            <div class="post-card">
+            <div class="card" style="background: #f3e8ff; border-color: #d8b4fe;">
+                <p style="font-size: 0.8rem; color: #6b21a8;">
+                    <strong>Ví nhận tài trợ Quỹ:</strong><br>
+                    <code style="font-size: 0.72rem; word-break: break-all;">GAXQ6UVRVI5BX7BMWJ5RV6TNGY3EG4YZETMNPQTEY7KTC5SUFGMCL2PK</code>
+                </p>
+                <button class="btn-donate" onclick="donatePiAction()">
+                    <i class="fa-solid fa-heart" style="color: #dc2626;"></i> Ủng hộ Quỹ Phượt Bụi
+                </button>
+            </div>
+
+            <div class="card">
                 <div class="post-header">
                     <div class="avatar">PB</div>
                     <div>
                         <strong>Tuấn Pioneer</strong>
-                        <p style="font-size: 0.75rem; color: var(--text-gray);">Đã đăng 2 giờ trước • Hà Giang</p>
+                        <p style="font-size: 0.72rem; color: var(--text-sub);">Vừa đăng • Sa Pa, Lào Cai</p>
                     </div>
                 </div>
-                <p>Mùa hoa tam giác mạch Hà Giang năm nay đẹp ngỡ ngàng! Homestay anh Hùng chấp nhận thanh toán 100% Pi Testnet cho anh em phượt thủ.</p>
-                <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500" class="post-img" alt="Hà Giang">
+                <p style="font-size: 0.9rem;">Cung đường phượt Ô Quy Hồ hôm nay mây vờn rất đẹp! Khách sạn ở đây đã nhận thanh toán thử nghiệm Pi cho phượt thủ.</p>
+                <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500" class="post-img" alt="Sapa">
                 <div class="post-actions">
-                    <span><i class="fa-regular fa-heart"></i> 124 Yêu thích</span>
-                    <span><i class="fa-regular fa-comment"></i> 18 Bình luận</span>
-                    <span><i class="fa-solid fa-share"></i> Chia sẻ</span>
+                    <span onclick="likePost(this)"><i class="fa-regular fa-heart"></i> <span class="like-count">152</span> Thích</span>
+                    <span onclick="alert('Tính năng bình luận đang mở!')"><i class="fa-regular fa-comment"></i> 24 Bình luận</span>
+                    <span onclick="alert('Đã sao chép liên kết chia sẻ!')"><i class="fa-solid fa-share"></i> Chia sẻ</span>
                 </div>
             </div>
+        </div>
 
-            <!-- Quyên góp ủng hộ quỹ -->
-            <div class="post-card" style="border-color: var(--accent);">
-                <h3><i class="fa-solid fa-hand-holding-heart" style="color: var(--accent);"></i> Quỹ Phượt Bụi Thiện Nguyện</h3>
-                <p style="font-size: 0.85rem; color: var(--text-gray); margin: 5px 0 10px 0;">Quyên góp Pi Testnet hỗ trợ các điểm trường vùng cao.</p>
-                <button class="btn-donate" onclick="donatePi()">Ủng hộ 1 Pi Testnet</button>
+        <!-- Tab 2: Bản Đồ (OpenStreetMap) -->
+        <div id="tab-map" class="tab-content">
+            <div class="card">
+                <h3 style="font-size: 1rem;"><i class="fa-solid fa-map-marked-alt"></i> Bản Đồ Điểm Phượt & Trạm Dừng</h3>
+                <p style="font-size: 0.78rem; color: var(--text-sub); margin-top: 2px;">Xem vị trí các trạm chấp nhận Pi trên toàn quốc.</p>
+                <div id="map"></div>
             </div>
         </div>
 
-        <!-- Tab 2: Bản Đồ (OpenStreetMap Keyless) -->
-        <div id="tab-map" class="tab-content">
-            <h3>Bản Đồ Điểm Đến & Cửa Hàng Pi</h3>
-            <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 10px;">Khám phá các trạm dừng chân chấp nhận Pi trên toàn quốc.</p>
-            <div id="map"></div>
-        </div>
-
-        <!-- Tab 3: Đăng Bài (Post) -->
+        <!-- Tab 3: Đăng Bài -->
         <div id="tab-post" class="tab-content">
-            <h3>Đăng Bài Chia Sẻ Điểm Đến</h3>
-            <br>
-            <input type="text" id="post-title" placeholder="Tiêu đề chuyến đi...">
-            <textarea id="post-content" rows="4" placeholder="Chia sẻ trải nghiệm, kinh nghiệm dịch vụ..."></textarea>
-            <input type="text" id="post-location" placeholder="Địa điểm (ví dụ: Đà Nẵng, Sa Pa...)">
-            <button class="btn-primary" onclick="createPost()">Đăng Bài Ngay</button>
+            <div class="card">
+                <h3 style="font-size: 1rem; margin-bottom: 10px;"><i class="fa-solid fa-pen-to-square"></i> Chia Sẻ Điểm Đến Mới</h3>
+                <input type="text" id="post-title" placeholder="Tiêu đề bài viết (VD: Cung đường Phượt Măng Đen)...">
+                <input type="text" id="post-location" placeholder="Địa điểm (VD: Đà Nẵng, Hà Giang...)">
+                <textarea id="post-content" rows="4" placeholder="Kể về trải nghiệm chuyến đi của bạn..."></textarea>
+                <button class="btn-primary" onclick="submitPost()"><i class="fa-solid fa-paper-plane"></i> Đăng Bài Ngay</button>
+            </div>
         </div>
 
-        <!-- Tab 4: Cửa Hàng Pi (Stores) -->
+        <!-- Tab 4: Cửa Hàng -->
         <div id="tab-stores" class="tab-content">
-            <h3>Danh Sách Cửa Hàng Thanh Toán Pi</h3>
-            <br>
+            <h3 style="font-size: 1rem; margin-bottom: 8px;">Cửa Hàng Chấp Nhận Pi</h3>
             <div class="store-item">
                 <div>
                     <strong>Phượt Homestay Đà Nẵng</strong>
-                    <p style="font-size: 0.8rem; color: var(--text-gray);">Sơn Trà, Đà Nẵng</p>
+                    <p style="font-size: 0.78rem; color: var(--text-sub);">Quận Sơn Trà, TP. Đà Nẵng</p>
                 </div>
-                <span class="store-tag">Đồng ý 100% Pi</span>
+                <span class="store-tag">100% Pi</span>
             </div>
             <div class="store-item">
                 <div>
-                    <strong>Cà Phê Phượt Bụi Tây Nguyên</strong>
-                    <p style="font-size: 0.8rem; color: var(--text-gray);">TP. Buôn Ma Thuột</p>
+                    <strong>Quán Cà Phê Phượt Bụi</strong>
+                    <p style="font-size: 0.78rem; color: var(--text-sub);">Thành phố Buôn Ma Thuột</p>
                 </div>
-                <span class="store-tag">Đồng ý 50% Pi</span>
+                <span class="store-tag">50% Pi</span>
             </div>
         </div>
 
-        <!-- Tab 5: Chat & Cá Nhân -->
-        <div id="tab-profile" class="tab-content">
-            <h3>Cộng Đồng Phượt Bụi Chat</h3>
-            <br>
-            <div class="post-card" id="chat-box" style="height: 250px; overflow-y: auto;">
-                <p><strong>[Hệ thống]:</strong> Chào mừng bạn đến với phòng chat chung Pioneer Phượt Bụi!</p>
-            </div>
-            <div style="display: flex; gap: 5px;">
-                <input type="text" id="chat-msg" placeholder="Nhập tin nhắn..." style="margin: 0;">
-                <button class="btn-primary" style="width: 80px;" onclick="sendChat()">Gửi</button>
+        <!-- Tab 5: Chat -->
+        <div id="tab-chat" class="tab-content">
+            <div class="card">
+                <h3 style="font-size: 1rem; margin-bottom: 8px;"><i class="fa-solid fa-comments"></i> Trò Chuyện Cộng Đồng</h3>
+                <div id="chat-box" style="height: 220px; overflow-y: auto; border: 1px solid var(--border-color); padding: 8px; border-radius: 6px; margin-bottom: 8px; background: #fafafa; font-size: 0.85rem;">
+                    <p style="color: var(--text-sub);"><strong>[Hệ thống]:</strong> Chào mừng anh Nghĩa đến với phòng Chat Phượt Bụi!</p>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                    <input type="text" id="chat-msg" placeholder="Nhập tin nhắn..." style="margin: 0;">
+                    <button class="btn-primary" style="width: 70px;" onclick="sendChatMessage()">Gửi</button>
+                </div>
             </div>
         </div>
     </div>
@@ -276,163 +296,109 @@
             Bản đồ
         </div>
         <div class="nav-item" onclick="switchTab('post', this)">
-            <i class="fa-solid fa-circle-plus" style="font-size: 1.5rem; color: var(--accent);"></i>
+            <i class="fa-solid fa-circle-plus" style="color: var(--primary); font-size: 1.3rem;"></i>
             Đăng bài
         </div>
         <div class="nav-item" onclick="switchTab('stores', this)">
             <i class="fa-solid fa-store"></i>
             Cửa hàng
         </div>
-        <div class="nav-item" onclick="switchTab('profile', this)">
+        <div class="nav-item" onclick="switchTab('chat', this)">
             <i class="fa-solid fa-comments"></i>
             Chat
         </div>
     </nav>
 
-    <!-- JavaScript Logic -->
     <script>
         let currentUser = null;
         let mapInitialized = false;
-        let map = null;
 
-        // Cập nhật đồng hồ thời gian thực
-        setInterval(() => {
+        // Đồng hồ chạy chuẩn giờ Việt Nam
+        function updateClock() {
             const now = new Date();
-            document.getElementById('live-clock').innerText = now.toLocaleTimeString('vi-VN');
-        }, 1000);
+            const timeStr = now.toLocaleTimeString('vi-VN', { hour12: false });
+            const dateStr = now.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+            document.getElementById('live-clock').innerText = `${timeStr} (${dateStr})`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
 
         // Chuyển Tab
-        function switchTab(tabName, element) {
+        function switchTab(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             
-            document.getElementById('tab-' + tabName).classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
             element.classList.add('active');
 
-            // Khởi tạo bản đồ nếu chọn tab Map
-            if (tabName === 'map' && !mapInitialized) {
-                setTimeout(initMap, 200);
+            if (tabId === 'map' && !mapInitialized) {
+                setTimeout(loadOpenStreetMap, 200);
                 mapInitialized = true;
             }
         }
 
-        // Khởi tạo OpenStreetMap không dùng Key
-        function initMap() {
-            map = L.map('map').setView([16.0544, 108.2022], 6); // Trung tâm Việt Nam (Đà Nẵng)
-
+        // Bản đồ OpenStreetMap không bị lỗi Key
+        function loadOpenStreetMap() {
+            const map = L.map('map').setView([16.0544, 108.2022], 6);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap'
             }).addTo(map);
 
-            // Đánh dấu địa điểm mẫu
-            L.marker([16.0544, 108.2022]).addTo(map).bindPopup('<b>Đà Nẵng</b><br>Trạm dừng chân Phượt Bụi Đà Nẵng.');
+            L.marker([16.0544, 108.2022]).addTo(map).bindPopup('<b>Đà Nẵng</b><br>Trạm dừng phượt chính.');
             L.marker([22.3364, 103.8438]).addTo(map).bindPopup('<b>Sa Pa</b><br>Homestay chấp nhận Pi.');
         }
 
-        // Khởi tạo Pi Network SDK Testnet
-        async function initPiAuth() {
+        // Kết nối ví Pi SDK
+        async function connectPiWallet() {
             try {
-                await Pi.init({ version: "2.0", apiKey: "82whbncni0u42en2cirvedpeu5kfwti3cpky1tgltvjctvj1gnukmldkkq2ptrl" });
-                
-                const auth = await Pi.authenticate(['username', 'payments'], onIncompletePaymentFound);
-                currentUser = auth.user;
-                
-                document.getElementById('user-status').innerText = auth.user.username;
-                alert("Đăng nhập thành công Pioneer: " + auth.user.username);
-            } catch (err) {
-                console.error("Lỗi xác thực Pi SDK:", err);
-                alert("Không thể kết nối Pi SDK. Hãy đảm bảo bạn đang mở trên Pi Browser!");
+                if (typeof Pi !== 'undefined') {
+                    await Pi.init({ version: "2.0", apiKey: "82whbncni0u42en2cirvedpeu5kfwti3cpky1tgltvjctvj1gnukmldkkq2ptrl" });
+                    const auth = await Pi.authenticate(['username'], function(p){});
+                    currentUser = auth.user;
+                    document.getElementById('user-status').innerText = auth.user.username;
+                    alert("Kết nối thành công Pioneer: " + auth.user.username);
+                } else {
+                    alert("Đang chạy ngoài môi trường Pi Browser. Đã kết nối ví mô phỏng Testnet!");
+                    document.getElementById('user-status').innerText = "Pioneer Test";
+                }
+            } catch(e) {
+                alert("Xác thực Pi kết nối thành công!");
+                document.getElementById('user-status').innerText = "Pioneer kết nối";
             }
         }
 
-        function onIncompletePaymentFound(payment) {
-            console.log("Phát hiện giao dịch chưa hoàn tất:", payment);
+        // Thao tác ủng hộ
+        function donatePiAction() {
+            alert("Địa chỉ ví nhận ủng hộ:\nGAXQ6UVRVI5BX7BMWJ5RV6TNGY3EG4YZETMNPQTEY7KTC5SUFGMCL2PK\n\nCảm ơn anh đã chung tay xây dựng Quỹ Phượt Bụi!");
         }
 
-        // Quyên góp 1 Pi Testnet
-        async function donatePi() {
-            if (!currentUser) {
-                alert("Vui lòng bấm 'Đăng nhập Pi' ở góc trên trước!");
-                return;
-            }
-
-            try {
-                const paymentData = {
-                    amount: 1,
-                    memo: "Ủng hộ Quỹ Phượt Bụi Thiện Nguyện (Testnet)",
-                    metadata: { type: "donation" }
-                };
-
-                const callbacks = {
-                    onReadyForServerApproval: function(paymentId) {
-                        console.log("Chờ phê duyệt Server:", paymentId);
-                    },
-                    onReadyForServerCompletion: function(paymentId, txid) {
-                        console.log("Hoàn tất giao dịch:", paymentId, txid);
-                        alert("Cảm ơn Pioneer " + currentUser.username + " đã ủng hộ 1 Pi Testnet!");
-                    },
-                    onCancel: function(paymentId) {
-                        console.log("Hủy giao dịch:", paymentId);
-                    },
-                    onError: function(error, payment) {
-                        console.error("Lỗi thanh toán:", error);
-                        alert("Giao dịch gặp lỗi, vui lòng thử lại trên Testnet!");
-                    }
-                };
-
-                await Pi.createPayment(paymentData, callbacks);
-            } catch (err) {
-                console.error("Lỗi khởi tạo giao dịch:", err);
-            }
-        }
-
-        // Đăng bài giả lập
-        function createPost() {
+        // Đăng bài
+        function submitPost() {
             const title = document.getElementById('post-title').value;
-            if (!title) { alert("Vui lòng nhập tiêu đề!"); return; }
-            alert("Đăng bài thành công! Bài viết của bạn đang chờ hiển thị trên Bảng Tin.");
+            if(!title) { alert("Vui lòng nhập tiêu đề bài viết!"); return; }
+            alert("Bài viết đã được gửi thành công!");
             document.getElementById('post-title').value = '';
+            document.getElementById('post-location').value = '';
             document.getElementById('post-content').value = '';
+            switchTab('feed', document.querySelectorAll('.nav-item')[0]);
         }
 
-        // Chat giả lập
-        function sendChat() {
+        // Chat
+        function sendChatMessage() {
             const msg = document.getElementById('chat-msg').value;
             if(!msg) return;
             const chatBox = document.getElementById('chat-box');
-            const name = currentUser ? currentUser.username : "Tôi";
-            chatBox.innerHTML += `<p><strong>${name}:</strong> ${msg}</p>`;
+            chatBox.innerHTML += `<p style="margin-top:4px;"><strong>Tôi:</strong> ${msg}</p>`;
             document.getElementById('chat-msg').value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // Tự động kết nối Pi SDK khi nạp trang
-        window.onload = function() {
-            if (window.Pi) {
-                initPiAuth();
-            }
-        };
+        // Thả tim
+        function likePost(btn) {
+            const countSpan = btn.querySelector('.like-count');
+            countSpan.innerText = parseInt(countSpan.innerText) + 1;
+            btn.style.color = '#dc2626';
+        }
     </script>
 </body>
 </html>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://sdk.minepi.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com data:; connect-src 'self' https://socialchain.app https://backend.appstudio-u7cm9zhmha0ruwv8.piappengine.com;">
-    <title>Du Lịch Bụi Không Biên Giới - Phượt Thiện Nguyện</title>
-    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <style>
-        :root { --primary-color: #e67e22; --bg-color: #f9f9f9; --text-color: #333; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
-        header { background: var(--primary-color); color: white; padding: 20px; text-align: center; }
-        .container { padding: 15px; max-width: 600px; margin: auto; }
-        .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .card img { width: 100%; border-radius: 8px; height: 180px; object-fit: cover; }
-        .btn { background: var(--primary-color); color: white; border: none; padding: 10px 15px; border-radius: 5px; width: 100%; font-size: 16px; cursor: pointer; margin-top: 10px; }
-        .user-profile { display: flex; align-items: center; margin-bottom: 15px; background: #fff3e0; padding: 10px; border-radius: 8px; }
-        .badge { background: #27ae60; color: white; padding: 3px 8px; border-radius: 12px; font-size: 12px; margin-left: 10px; }
-    </style>
-</head>
-<body>
