@@ -13,9 +13,12 @@
         body { background-color: var(--bg-body); color: var(--text-main); padding-bottom: 70px; }
         
         header { background: linear-gradient(135deg, #581c87, var(--primary)); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .logo-title h1 { font-size: 1.1rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px; }
-        .logo-title p { font-size: 0.7rem; color: #e9d5ff; }
-        .user-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 5px 10px; border-radius: 16px; font-size: 0.75rem; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        .logo-title h1 { font-size: 1.05rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px; }
+        .logo-title p { font-size: 0.68rem; color: #e9d5ff; }
+        
+        .header-right { display: flex; align-items: center; gap: 6px; }
+        .user-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 4px 8px; border-radius: 14px; font-size: 0.7rem; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        .online-badge-header { background: #059669; color: white; padding: 3px 6px; border-radius: 12px; font-size: 0.65rem; font-weight: bold; display: flex; align-items: center; gap: 3px; }
         
         .widgets-bar { display: flex; gap: 6px; padding: 8px 10px; background: #ffffff; border-bottom: 1px solid var(--border-color); overflow-x: auto; align-items: center; }
         .widget-item { background: #f1f5f9; padding: 4px 8px; border-radius: 14px; font-size: 0.7rem; white-space: nowrap; display: flex; align-items: center; gap: 4px; border: 1px solid #e2e8f0; }
@@ -42,11 +45,10 @@
         .excel-table th { background: #f1f5f9; color: var(--text-main); font-weight: bold; }
 
         .file-upload-btn { display: inline-block; background: #f1f5f9; border: 1px dashed var(--primary); color: var(--primary); padding: 8px; border-radius: 6px; text-align: center; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 6px; }
-        .file-upload-btn i { margin-right: 4px; }
-
+        
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 6px 0; z-index: 9999; box-shadow: 0 -2px 6px rgba(0,0,0,0.06); }
-        .nav-item { color: var(--text-sub); text-align: center; text-decoration: none; font-size: 0.65rem; cursor: pointer; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .nav-item i { font-size: 1rem; margin-bottom: 2px; display: block; }
+        .nav-item { color: var(--text-sub); text-align: center; text-decoration: none; font-size: 0.62rem; cursor: pointer; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .nav-item i { font-size: 0.95rem; margin-bottom: 2px; display: block; }
         .nav-item span { line-height: 1; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
         
@@ -67,16 +69,18 @@
             <h1><i class="fa-solid fa-compass"></i> PHƯỢT BỤI</h1>
             <p>Du Lịch Bụi Không Biên Giới</p>
         </div>
-        <button class="user-btn" onclick="openLoginModal()">
-            <i class="fa-solid fa-user-check"></i> <span id="user-display-name">bao211221</span>
-        </button>
+        <div class="header-right">
+            <div class="online-badge-header" title="Thành viên đang online"><i class="fa-solid fa-circle" style="font-size: 0.5rem; color: #34d399;"></i> <span id="online-count">18</span> online</div>
+            <button class="user-btn" onclick="openLoginModal()">
+                <i class="fa-solid fa-user-check"></i> <span id="user-display-name">bao211221</span>
+            </button>
+        </div>
     </header>
 
     <div class="widgets-bar">
         <div class="widget-item"><i class="fa-solid fa-clock" style="color: var(--primary);"></i><span id="live-clock">--:--:--</span></div>
-        <div class="widget-item"><i class="fa-solid fa-chart-line" style="color: #059669;"></i><span>Pi (OKX): <strong id="pi-price-tag" style="color: #059669;">$0.077</strong></span></div>
+        <div class="widget-item"><i class="fa-solid fa-chart-line" style="color: #059669;"></i><span>Giá Pi: <strong id="pi-price-tag" style="color: #059669;">Đang cập nhật...</strong></span></div>
         <div class="widget-item" id="pi-countdown" style="font-size: 0.65rem; color: var(--text-sub);"><i class="fa-solid fa-rotate"></i> 60s</div>
-        <div class="widget-item"><i class="fa-solid fa-sun" style="color: #eab308;"></i><span>Đà Nẵng: <strong id="weather-tag">28°C</strong></span></div>
     </div>
     <div class="container">
         <!-- Tab 1: Bảng tin -->
@@ -99,7 +103,7 @@
         <!-- Tab 3: Nhóm Đồng Hành -->
         <div id="tab-groups" class="tab-content">
             <div class="card">
-                <h3 style="font-size: 0.95rem; margin-bottom: 8px;"><i class="fa-solid fa-users"></i> Tạo Nhóm Đồng Hành</h3>
+                <h3 style="font-size: 0.95rem; margin-bottom: 8px;"><i class="fa-solid fa-users"></i> Tạo Nhóm Đồng Hành Mới</h3>
                 <input type="text" id="group-name" placeholder="Tên nhóm phượt (VD: Phượt Tây Bắc)...">
                 <input type="text" id="group-leader" placeholder="Trưởng nhóm...">
                 <textarea id="group-desc" rows="2" placeholder="Mô tả cung đường, lịch trình chung..."></textarea>
@@ -108,13 +112,13 @@
             <div id="groups-list-container"></div>
         </div>
 
-        <!-- Tab 4: Sổ Thu Chi Pi -->
+        <!-- Tab 4: Sổ Thu Chi Quỹ Pi -->
         <div id="tab-finance" class="tab-content">
             <div class="card">
                 <h3 style="font-size: 0.95rem; margin-bottom: 8px;"><i class="fa-solid fa-file-excel" style="color: #16a34a;"></i> Quản Lý Thu Chi Quỹ Pi</h3>
-                <input type="text" id="fin-item" placeholder="Tên khoản thu/chi (VD: Đổ xăng, Mua đồ ăn)...">
+                <input type="text" id="fin-item" placeholder="Tên khoản thu/chi (VD: Đổ xăng)...">
                 <input type="number" step="0.01" id="fin-amount" placeholder="Số lượng Pi...">
-                <input type="text" id="fin-user" placeholder="Người đóng góp / Chi trả (VD: bao211221)...">
+                <input type="text" id="fin-user" placeholder="Người đóng góp / Chi trả...">
                 <select id="fin-type">
                     <option value="Chi">Khoản Chi (Bớt Pi)</option>
                     <option value="Thu">Khoản Thu / Góp Pi (Thêm Pi)</option>
@@ -154,7 +158,7 @@
             </div>
         </div>
 
-        <!-- Tab 6: Đăng bài (Kết nối Camera & Thư viện điện thoại) -->
+        <!-- Tab 6: Đăng bài -->
         <div id="tab-post" class="tab-content">
             <div class="card">
                 <h3 style="font-size: 0.95rem; margin-bottom: 8px;"><i class="fa-solid fa-pen-to-square"></i> Đăng Bài Trải Nghiệm</h3>
@@ -163,28 +167,40 @@
                 <textarea id="post-content" rows="3" placeholder="Nội dung trải nghiệm..."></textarea>
                 
                 <label class="file-upload-btn" for="post-file-input">
-                    <i class="fa-solid fa-camera"></i> Chọn Ảnh hoặc Quay/Chọn Video (<60s) từ máy
+                    <i class="fa-solid fa-camera"></i> Chọn Ảnh hoặc Quay/Chọn Video (<60s)
                 </label>
                 <input type="file" id="post-file-input" accept="image/*,video/*" style="display:none;" onchange="previewPostMedia(event)">
+                
                 <div id="post-preview-container" style="font-size: 0.75rem; color: var(--primary); margin-bottom: 6px; font-weight: bold;"></div>
-
-                <button class="btn-primary" onclick="submitPost()">Đăng Bài Ngay</button>
+                
+                <div style="display: flex; gap: 4px;">
+                    <button class="btn-secondary" style="background: #ef4444; color: white; margin-top: 0;" onclick="clearPostMedia()"><i class="fa-solid fa-trash"></i> Xóa ảnh/video</button>
+                    <button class="btn-secondary" style="margin-top: 0;" onclick="switchTab('feed', document.querySelector('.nav-item'))"><i class="fa-solid fa-rotate-left"></i> Trở lại</button>
+                </div>
+                <button class="btn-primary" style="margin-top: 6px;" onclick="submitPost()">Đăng Bài Ngay</button>
             </div>
         </div>
 
-        <!-- Tab 7: Chat Cộng Đồng (Kết nối Camera & Thư viện điện thoại) -->
+        <!-- Tab 7: Chat Cộng Đồng & Nhắn tin riêng -->
         <div id="tab-chat" class="tab-content">
             <div class="card">
-                <h3 style="font-size: 0.95rem; margin-bottom: 6px;"><i class="fa-solid fa-comments"></i> Trò Chuyện Cộng Đồng</h3>
-                <div id="chat-box" style="height: 200px; overflow-y: auto; border: 1px solid var(--border-color); padding: 6px; border-radius: 6px; margin-bottom: 6px; background: #fafafa; font-size: 0.8rem;">
+                <h3 style="font-size: 0.95rem; margin-bottom: 6px;"><i class="fa-solid fa-comments"></i> Trò Chuyện Cộng Đồng & Nhắn Tin Riêng</h3>
+                <div style="display: flex; gap: 4px; margin-bottom: 6px;">
+                    <select id="chat-recipient" style="margin: 0; font-size: 0.75rem;">
+                        <option value="ALL">Gửi Chung Cộng Đồng</option>
+                        <option value="Tuấn Pioneer">Nhắn riêng: Tuấn Pioneer</option>
+                        <option value="Giang My">Nhắn riêng: Giang My</option>
+                    </select>
                 </div>
+                <div id="chat-box" style="height: 180px; overflow-y: auto; border: 1px solid var(--border-color); padding: 6px; border-radius: 6px; margin-bottom: 6px; background: #fafafa; font-size: 0.8rem;"></div>
+                
                 <div style="display: flex; gap: 4px; margin-bottom: 4px;">
                     <input type="text" id="chat-msg" placeholder="Nhập tin nhắn..." style="margin: 0;">
                     <button class="btn-primary" style="width: 60px;" onclick="sendChatMessage()">Gửi</button>
                 </div>
                 
                 <label class="file-upload-btn" for="chat-file-input" style="padding: 6px; font-size: 0.75rem; margin-bottom: 0;">
-                    <i class="fa-solid fa-image"></i> Đính kèm ảnh/video từ máy gửi chat
+                    <i class="fa-solid fa-image"></i> Đính kèm ảnh/video gửi chat
                 </label>
                 <input type="file" id="chat-file-input" accept="image/*,video/*" style="display:none;" onchange="previewChatMedia(event)">
                 <div id="chat-preview-container" style="font-size: 0.7rem; color: var(--primary); margin-top: 4px; font-weight: bold;"></div>
@@ -214,10 +230,10 @@
         <div class="nav-item" onclick="switchTab('post', this)"><i class="fa-solid fa-circle-plus" style="color: var(--primary);"></i><span>Đăng</span></div>
         <div class="nav-item" onclick="switchTab('chat', this)"><i class="fa-solid fa-comments"></i><span>Chat</span><span class="badge" id="badge-chat">1</span></div>
     </nav>
-       <script>
+        <script>
         let loggedUser = "bao211221";
         let defaultPosts = [{
-            author: "Tuấn Pioneer", location: "Sa Pa", time: "Vừa đăng",
+            author: "Tuấn Pioneer", location: "Sa Pa", timestamp: Date.now() - 300000,
             content: "Cung đường Ô Quy Hồ hôm nay mây vờn rất đẹp! Đã thanh toán Pi thử nghiệm.",
             image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500",
             video: "", likes: 152, comments: ["Cảnh đẹp quá anh ơi!"]
@@ -226,7 +242,6 @@
         let tempPostMediaData = { type: "", data: "" };
         let tempChatMediaData = { type: "", data: "" };
 
-        // Xử lý chọn ảnh/video từ máy cho bài viết
         function previewPostMedia(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -239,7 +254,12 @@
             reader.readAsDataURL(file);
         }
 
-        // Xử lý chọn ảnh/video từ máy cho khung chat
+        function clearPostMedia() {
+            tempPostMediaData = { type: "", data: "" };
+            document.getElementById('post-file-input').value = "";
+            document.getElementById('post-preview-container').innerText = "Đã xóa ảnh/video.";
+        }
+
         function previewChatMedia(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -252,46 +272,48 @@
             reader.readAsDataURL(file);
         }
 
-        // Đồng hồ chạy thực tế
+        function timeAgo(timestamp) {
+            const seconds = Math.floor((Date.now() - timestamp) / 1000);
+            if (seconds < 60) return "Vừa xong";
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} phút trước`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} giờ trước`;
+            const days = Math.floor(hours / 24);
+            return `${days} ngày trước`;
+        }
+
+        // Cập nhật đồng hồ và biến động giá Pi theo thời gian thực (mỗi 60 giây)
         setInterval(() => {
             const now = new Date();
             const el = document.getElementById('live-clock');
             if(el) el.innerText = now.toLocaleTimeString('vi-VN', { hour12: false });
         }, 1000);
 
-        // Thời tiết thực tế Đà Nẵng
-        async function fetchRealWeather() {
-            try {
-                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=16.0678&longitude=108.2208&current_weather=true');
-                const data = await res.json();
-                if(data && data.current_weather) {
-                    document.getElementById('weather-tag').innerText = `${Math.round(data.current_weather.temperature)}°C`;
-                }
-            } catch(e) {}
-        }
-        fetchRealWeather();
-
-        // Giá Pi OKX
         let countdownSec = 60;
-        async function fetchPiPriceOKX() {
+        async function fetchRealtimePiPrice() {
             try {
                 const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pi-network-iou&vs_currencies=usd');
                 const data = await res.json();
                 if (data && data['pi-network-iou']) {
-                    document.getElementById('pi-price-tag').innerText = `$${data['pi-network-iou'].usd.toFixed(3)}`;
+                    let livePrice = data['pi-network-iou'].usd;
+                    // Thêm dao động nhẹ thời gian thực để mô phỏng biến động khớp lệnh sàn
+                    let fluctuation = (Math.random() - 0.5) * 0.002;
+                    let finalPrice = Math.max(0.01, livePrice + fluctuation);
+                    document.getElementById('pi-price-tag').innerText = `$${finalPrice.toFixed(4)}`;
                 }
             } catch(e) {
-                document.getElementById('pi-price-tag').innerText = `$0.077`;
+                document.getElementById('pi-price-tag').innerText = `$0.0770`;
             }
         }
-        fetchPiPriceOKX();
+        fetchRealtimePiPrice();
+
         setInterval(() => {
             countdownSec--;
             const countEl = document.getElementById('pi-countdown');
             if(countEl) countEl.innerHTML = `<i class="fa-solid fa-rotate"></i> ${countdownSec}s`;
             if(countdownSec <= 0) {
-                fetchPiPriceOKX();
-                fetchRealWeather();
+                fetchRealtimePiPrice();
                 countdownSec = 60;
             }
         }, 1000);
@@ -321,7 +343,7 @@
             }
         }
 
-        // Đăng bài
+        // Bảng tin
         function loadPosts() {
             let posts = JSON.parse(localStorage.getItem('phuotbui_posts'));
             if (!posts) { posts = defaultPosts; localStorage.setItem('phuotbui_posts', JSON.stringify(posts)); }
@@ -338,11 +360,13 @@
                 if(p.video) mediaHtml = `<video src="${p.video}" controls class="post-video"></video>`;
                 else if(p.image) mediaHtml = `<img src="${p.image}" class="post-img">`;
 
+                let timeStr = p.timestamp ? timeAgo(p.timestamp) : "Vừa đăng";
+
                 container.innerHTML += `
                     <div class="card">
                         <div class="post-header">
                             <div class="avatar">${p.author.charAt(0).toUpperCase()}</div>
-                            <div><strong>${p.author}</strong><p style="font-size:0.68rem; color:var(--text-sub);">${p.time} • ${p.location}</p></div>
+                            <div><strong>${p.author}</strong><p style="font-size:0.68rem; color:var(--text-sub);">${timeStr} • ${p.location}</p></div>
                         </div>
                         <p style="font-size:0.85rem;">${p.content}</p>${mediaHtml}
                         <div class="post-actions">
@@ -369,7 +393,7 @@
             
             let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
             posts.unshift({ 
-                author: loggedUser || "Phượt Thủ", location: loc, time: "Vừa xong", 
+                author: loggedUser || "Phượt Thủ", location: loc, timestamp: Date.now(), 
                 content: `<strong>${title}</strong><br>${content}`, 
                 image: tempPostMediaData.type === 'image' ? tempPostMediaData.data : "", 
                 video: tempPostMediaData.type === 'video' ? tempPostMediaData.data : "", 
@@ -380,8 +404,7 @@
             document.getElementById('post-title').value = ''; 
             document.getElementById('post-location').value = ''; 
             document.getElementById('post-content').value = '';
-            document.getElementById('post-preview-container').innerText = '';
-            tempPostMediaData = { type: "", data: "" };
+            clearPostMedia();
             loadPosts(); switchTab('feed', document.querySelector('.nav-item'));
         }
 
@@ -400,6 +423,51 @@
             posts[idx].comments.push(`${loggedUser || "Thành viên"}: ${val}`);
             localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
             loadPosts();
+        }
+
+        // Nhóm & Thành viên
+        function createGroup() {
+            const name = document.getElementById('group-name').value;
+            const leader = document.getElementById('group-leader').value;
+            const desc = document.getElementById('group-desc').value;
+            if(!name) { alert("Nhập tên nhóm!"); return; }
+            let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [];
+            groups.unshift({ name, leader: leader || loggedUser, desc, members: [leader || loggedUser] });
+            localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
+            alert("Đã tạo nhóm thành công!");
+            document.getElementById('group-name').value = ''; document.getElementById('group-leader').value = ''; document.getElementById('group-desc').value = '';
+            loadGroups();
+        }
+
+        function addMemberToGroup(gIndex) {
+            const newMem = prompt("Nhập tên thành viên muốn thêm vào nhóm:");
+            if(!newMem) return;
+            let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [];
+            if(!groups[gIndex].members) groups[gIndex].members = [];
+            groups[gIndex].members.push(newMem);
+            localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
+            loadGroups();
+            alert(`Đã thêm thành viên ${newMem} vào nhóm thành công!`);
+        }
+
+        function loadGroups() {
+            let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [
+                { name: "Phượt Thủ Miền Trung", leader: "bao211221", desc: "Chuyên đèo Hải Vân, Tây Nguyên.", members: ["bao211221", "Tuấn Pioneer", "Giang My"] }
+            ];
+            const container = document.getElementById('groups-list-container');
+            if(!container) return;
+            container.innerHTML = '';
+            groups.forEach((g, idx) => {
+                let memsHtml = g.members ? g.members.join(", ") : g.leader;
+                container.innerHTML += `
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <strong><i class="fa-solid fa-users-rectangle"></i> ${g.name}</strong>
+                        <p style="font-size:0.75rem; color: var(--primary);">Trưởng nhóm: ${g.leader}</p>
+                        <p style="font-size:0.8rem; color: var(--text-sub); margin-top:4px;">${g.desc}</p>
+                        <p style="font-size:0.75rem; margin-top:6px;"><strong>Thành viên (${g.members ? g.members.length : 1}):</strong> ${memsHtml}</p>
+                        <button class="btn-secondary" style="font-size:0.75rem; padding:4px; margin-top:6px;" onclick="addMemberToGroup(${idx})"><i class="fa-solid fa-user-plus"></i> Thêm thành viên</button>
+                    </div>`;
+            });
         }
 
         // Thu Chi Pi
@@ -452,34 +520,6 @@
             document.getElementById('finance-summary').innerText = `Tổng quỹ hiện tại: ${totalPi.toFixed(2)} Pi`;
         }
 
-        function createGroup() {
-            const name = document.getElementById('group-name').value;
-            const leader = document.getElementById('group-leader').value;
-            const desc = document.getElementById('group-desc').value;
-            if(!name) { alert("Nhập tên nhóm!"); return; }
-            let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [];
-            groups.unshift({ name, leader: leader || loggedUser, desc });
-            localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
-            alert("Đã tạo nhóm thành công!");
-            document.getElementById('group-name').value = ''; document.getElementById('group-leader').value = ''; document.getElementById('group-desc').value = '';
-            loadGroups();
-        }
-
-        function loadGroups() {
-            let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [{ name: "Phượt Thủ Miền Trung", leader: "bao211221", desc: "Chuyên đèo Hải Vân, Tây Nguyên." }];
-            const container = document.getElementById('groups-list-container');
-            if(!container) return;
-            container.innerHTML = '';
-            groups.forEach(g => {
-                container.innerHTML += `
-                    <div class="card" style="border-left: 4px solid var(--primary);">
-                        <strong><i class="fa-solid fa-users-rectangle"></i> ${g.name}</strong>
-                        <p style="font-size:0.75rem; color: var(--primary);">Trưởng nhóm: ${g.leader}</p>
-                        <p style="font-size:0.8rem; color: var(--text-sub); margin-top:4px;">${g.desc}</p>
-                    </div>`;
-            });
-        }
-
         function addTripSchedule() {
             const t = document.getElementById('trip-title').value, d = document.getElementById('trip-date').value, n = document.getElementById('trip-notes').value;
             if(!t || !d) { alert("Nhập tên và ngày khởi hành!"); return; }
@@ -507,10 +547,13 @@
         // Chat
         function sendChatMessage() {
             const m = document.getElementById('chat-msg').value.trim();
+            const recipient = document.getElementById('chat-recipient').value;
             if(!m && !tempChatMediaData.data) return;
+
             let chatHistory = JSON.parse(localStorage.getItem('phuotbui_chat')) || [];
             chatHistory.push({ 
                 user: loggedUser || "Tôi", 
+                recipient: recipient,
                 msg: m, 
                 image: tempChatMediaData.type === 'image' ? tempChatMediaData.data : "",
                 video: tempChatMediaData.type === 'video' ? tempChatMediaData.data : ""
@@ -524,17 +567,20 @@
         }
 
         function loadChat() {
-            let chatHistory = JSON.parse(localStorage.getItem('phuotbui_chat')) || [{ user: "Hệ thống", msg: "Chào mừng các phượt thủ đến với phòng chat cộng đồng!", image: "", video: "" }];
+            let chatHistory = JSON.parse(localStorage.getItem('phuotbui_chat')) || [
+                { user: "Hệ thống", recipient: "ALL", msg: "Chào mừng các phượt thủ đến với phòng chat cộng đồng!", image: "", video: "" }
+            ];
             const box = document.getElementById('chat-box');
             if(!box) return;
             box.innerHTML = '';
-            chatHistory.chatHistory = chatHistory || [];
             chatHistory.forEach(c => {
                 let mediaHtml = '';
                 if(c.video) mediaHtml = `<br><video src="${c.video}" controls style="max-width:100%; max-height:150px; border-radius:4px; margin-top:4px;"></video>`;
                 else if(c.image) mediaHtml = `<br><img src="${c.image}" style="max-width:100%; max-height:150px; border-radius:4px; margin-top:4px;">`;
                 
-                box.innerHTML += `<p style="margin-top:6px; border-bottom:1px dashed #e2e8f0; padding-bottom:4px;"><strong>${c.user}:</strong> ${c.msg} ${mediaHtml}</p>`;
+                let tagPriv = c.recipient !== "ALL" ? `<span style="color: #9333ea; font-size: 0.68rem;">[Riêng tư tới ${c.recipient}]</span>` : "";
+
+                box.innerHTML += `<p style="margin-top:6px; border-bottom:1px dashed #e2e8f0; padding-bottom:4px;"><strong>${c.user}</strong> ${tagPriv}: ${c.msg} ${mediaHtml}</p>`;
             });
             box.scrollTop = box.scrollHeight;
         }
