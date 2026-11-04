@@ -167,7 +167,6 @@
             gap: 6px;
         }
 
-        /* Modal Đăng nhập */
         .modal {
             display: none;
             position: fixed;
@@ -196,7 +195,7 @@
             <h1><i class="fa-solid fa-compass"></i> PHƯỢT BỤI</h1>
             <p>Du Lịch Bụi Không Biên Giới</p>
         </div>
-        <button class="user-btn" id="header-auth-btn" onclick="openLoginModal()">
+        <button class="user-btn" onclick="openLoginModal()">
             <i class="fa-solid fa-user-check"></i> <span id="user-display-name">Đăng nhập</span>
         </button>
     </header>
@@ -224,7 +223,7 @@
                     <strong>Ví nhận tài trợ Quỹ:</strong><br>
                     <code style="font-size: 0.72rem; word-break: break-all;">GAXQ6UVRVI5BX7BMWJ5RV6TNGY3EG4YZETMNPQTEY7KTC5SUFGMCL2PK</code>
                 </p>
-                <button class="btn-donate" onclick="alert('Đã sao chép địa chỉ ví tài trợ!')">
+                <button class="btn-donate" onclick="alert('Đã ghi nhận địa chỉ ví tài trợ!')">
                     <i class="fa-solid fa-heart" style="color: #dc2626;"></i> Ủng hộ Quỹ Phượt Bụi
                 </button>
             </div>
@@ -306,7 +305,7 @@
         </div>
     </div>
 
-    <!-- Hộp Thoại Đăng Nhập / Đăng Ký Người Dùng -->
+    <!-- Hộp Thoại Đăng Nhập -->
     <div class="modal" id="login-modal">
         <div class="modal-card">
             <h3 style="margin-bottom: 12px; font-size: 1.1rem; color: var(--primary);"><i class="fa-solid fa-user"></i> Đăng Nhập Thành Viên</h3>
@@ -344,27 +343,29 @@
     <script>
         let loggedUser = null;
 
-        // 1. Đồng hồ
+        // 1. Đồng hồ thời gian thực
         setInterval(() => {
             const now = new Date();
-            document.getElementById('live-clock').innerText = now.toLocaleTimeString('vi-VN', { hour12: false });
+            const clockEl = document.getElementById('live-clock');
+            if(clockEl) clockEl.innerText = now.toLocaleTimeString('vi-VN', { hour12: false });
         }, 1000);
 
-        // 2. Chuyển Tab
+        // 2. Chuyển Tab giao diện
         function switchTab(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
-            element.classList.add('active');
+            const target = document.getElementById('tab- ' + tabId) || document.getElementById('tab-' + tabId);
+            if(target) target.classList.add('active');
+            if(element) element.classList.add('active');
         }
 
-        // 3. Đăng nhập / Đăng ký Người dùng Độc lập
+        // 3. Đăng nhập Modal
         function openLoginModal() {
             if(loggedUser) {
-                if(confirm(`Bạn đang đăng nhập với tên "${loggedUser}". Bạn có muốn đăng xuất không?`)) {
+                if(confirm(`Đang đăng nhập tài khoản: ${loggedUser}. Bạn có muốn đăng xuất?`)) {
                     loggedUser = null;
                     document.getElementById('user-display-name').innerText = "Đăng nhập";
-                    alert("Đã đăng xuất tài khoản!");
+                    alert("Đã đăng xuất!");
                 }
             } else {
                 document.getElementById('login-modal').classList.add('active');
@@ -379,13 +380,13 @@
             const u = document.getElementById('auth-username').value;
             const p = document.getElementById('auth-password').value;
             if(!u || !p) {
-                alert("Vui lòng nhập tên đăng nhập và mật khẩu!");
+                alert("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
                 return;
             }
             loggedUser = u;
             document.getElementById('user-display-name').innerText = u;
             closeLoginModal();
-            alert("Đăng nhập thành công! Chào mừng " + u + " đến với Phượt Bụi.");
+            alert("Đăng nhập thành công: " + u);
         }
 
         // 4. Tìm Google Maps
@@ -402,7 +403,7 @@
             const content = document.getElementById('post-content').value;
 
             if(!title || !content) { 
-                alert("Vui lòng nhập đầy đủ tiêu đề và nội dung bài viết!"); 
+                alert("Vui lòng nhập tiêu đề và nội dung bài viết!"); 
                 return; 
             }
 
@@ -435,7 +436,7 @@
             switchTab('feed', document.querySelectorAll('.nav-item')[0]);
         }
 
-        // 6. Kết nối ví Pi (Tùy chọn)
+        // 6. Kết nối Ví Pi
         async function connectPiWallet() {
             try {
                 if (typeof Pi !== 'undefined') {
@@ -449,24 +450,21 @@
                     loggedUser = "Pioneer Test";
                     document.getElementById('user-display-name').innerText = "Pioneer Test";
                     closeLoginModal();
-                    alert("Đã đăng nhập bằng Ví Pi (Mô phỏng)!");
+                    alert("Đã đăng nhập bằng chế độ mô phỏng Ví Pi!");
                 }
             } catch(e) {
+                loggedUser = "Pioneer";
                 document.getElementById('user-display-name').innerText = "Pioneer";
                 closeLoginModal();
             }
         }
 
-        // 7. Chat
+        // 7. Chat cộng đồng
         function sendChatMessage() {
             const msg = document.getElementById('chat-msg').value;
             if(!msg) return;
             const chatBox = document.getElementById('chat-box');
-            const author = loggedUser ? loggedUser : "Tôi";
-                    function sendChatMessage() {
-            const msg = document.getElementById('chat-msg').value;
-            if(!msg) return;
-            const chatBox = document.getElementById('chat-box');
+                const chatBox = document.getElementById('chat-box');
             const author = loggedUser ? loggedUser : "Tôi";
             chatBox.innerHTML += `<p style="margin-top:4px;"><strong>${author}:</strong> ${msg}</p>`;
             document.getElementById('chat-msg').value = '';
@@ -475,4 +473,3 @@
     </script>
 </body>
 </html>
-
