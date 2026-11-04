@@ -18,19 +18,21 @@
         
         .header-right { display: flex; align-items: center; gap: 6px; }
         .user-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 4px 8px; border-radius: 14px; font-size: 0.7rem; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 4px; }
-        .online-badge-header { background: #059669; color: white; padding: 3px 6px; border-radius: 12px; font-size: 0.65rem; font-weight: bold; display: flex; align-items: center; gap: 3px; }
+        .online-badge-header { background: #059669; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.65rem; font-weight: bold; display: flex; align-items: center; gap: 4px; cursor: pointer; }
         
         .widgets-bar { display: flex; gap: 6px; padding: 8px 10px; background: #ffffff; border-bottom: 1px solid var(--border-color); overflow-x: auto; align-items: center; }
-        .widget-item { background: #f1f5f9; padding: 4px 8px; border-radius: 14px; font-size: 0.7rem; white-space: nowrap; display: flex; align-items: center; gap: 4px; border: 1px solid #e2e8f0; }
+        .widget-item { background: #f1f5f9; padding: 4px 8px; border-radius: 14px; font-size: 0.7rem; white-space: nowrap; display: flex; align-items: center; gap: 4px; border: 1px solid #e2e8f0; cursor: pointer; }
         
         .container { padding: 10px; max-width: 600px; margin: 0 auto; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .card { background: var(--card-bg); border-radius: 10px; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border-color); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
         
-        .post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .post-header-left { display: flex; align-items: center; gap: 8px; }
         .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; }
-        .post-img, .post-video { width: 100%; border-radius: 6px; margin: 6px 0; max-height: 220px; object-fit: cover; }
+        .post-media-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 4px; margin: 6px 0; }
+        .post-img, .post-video { width: 100%; border-radius: 6px; max-height: 180px; object-fit: cover; }
         .post-actions { display: flex; justify-content: space-around; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 6px 0; margin: 6px 0; color: var(--text-sub); font-size: 0.78rem; cursor: pointer; }
         
         .comments-section { margin-top: 6px; }
@@ -45,7 +47,9 @@
         .excel-table th { background: #f1f5f9; color: var(--text-main); font-weight: bold; }
 
         .file-upload-btn { display: inline-block; background: #f1f5f9; border: 1px dashed var(--primary); color: var(--primary); padding: 8px; border-radius: 6px; text-align: center; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 6px; }
-        
+        .media-preview-item { display: flex; justify-content: space-between; align-items: center; background: #f1f5f9; padding: 4px 8px; border-radius: 6px; margin-bottom: 4px; font-size: 0.75rem; }
+        .media-preview-item button { background: #ef4444; color: white; border: none; padding: 2px 6px; border-radius: 4px; cursor: pointer; }
+
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 6px 0; z-index: 9999; box-shadow: 0 -2px 6px rgba(0,0,0,0.06); }
         .nav-item { color: var(--text-sub); text-align: center; text-decoration: none; font-size: 0.62rem; cursor: pointer; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
         .nav-item i { font-size: 0.95rem; margin-bottom: 2px; display: block; }
@@ -60,7 +64,8 @@
         
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; padding: 15px; }
         .modal.active { display: flex; }
-        .modal-card { background: white; padding: 16px; border-radius: 10px; width: 100%; max-width: 380px; }
+        .modal-card { background: white; padding: 16px; border-radius: 10px; width: 100%; max-width: 400px; max-height: 80vh; overflow-y: auto; }
+        .world-clock-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #e2e8f0; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -70,7 +75,10 @@
             <p>Du Lịch Bụi Không Biên Giới</p>
         </div>
         <div class="header-right">
-            <div class="online-badge-header" title="Thành viên đang online"><i class="fa-solid fa-circle" style="font-size: 0.5rem; color: #34d399;"></i> <span id="online-count">18</span> online</div>
+            <button id="admin-log-btn" class="user-btn" style="display:none; background: #ea580c;" onclick="openAdminLogModal()" title="Nhật ký chỉnh sửa">
+                <i class="fa-solid fa-user-shield"></i>
+            </button>
+            <div class="online-badge-header" onclick="openOnlineUsersModal()"><i class="fa-solid fa-circle" style="font-size: 0.5rem; color: #34d399;"></i> <span id="online-count">18</span> online</div>
             <button class="user-btn" onclick="openLoginModal()">
                 <i class="fa-solid fa-user-check"></i> <span id="user-display-name">bao211221</span>
             </button>
@@ -78,9 +86,8 @@
     </header>
 
     <div class="widgets-bar">
-        <div class="widget-item"><i class="fa-solid fa-clock" style="color: var(--primary);"></i><span id="live-clock">--:--:--</span></div>
-        <div class="widget-item"><i class="fa-solid fa-chart-line" style="color: #059669;"></i><span>Giá Pi: <strong id="pi-price-tag" style="color: #059669;">Đang cập nhật...</strong></span></div>
-        <div class="widget-item" id="pi-countdown" style="font-size: 0.65rem; color: var(--text-sub);"><i class="fa-solid fa-rotate"></i> 60s</div>
+        <div class="widget-item" onclick="openWorldClockModal()"><i class="fa-solid fa-clock" style="color: var(--primary);"></i><span id="live-clock">--:--:--</span></div>
+        <div class="widget-item"><i class="fa-solid fa-chart-line" style="color: #059669;"></i><span>Giá Pi: <strong id="pi-price-tag" style="color: #059669;">$0.0770</strong> (<span id="pi-sec">60s</span>)</span></div>
     </div>
     <div class="container">
         <!-- Tab 1: Bảng tin -->
@@ -104,9 +111,9 @@
         <div id="tab-groups" class="tab-content">
             <div class="card">
                 <h3 style="font-size: 0.95rem; margin-bottom: 8px;"><i class="fa-solid fa-users"></i> Tạo Nhóm Đồng Hành Mới</h3>
-                <input type="text" id="group-name" placeholder="Tên nhóm phượt (VD: Phượt Tây Bắc)...">
+                <input type="text" id="group-name" placeholder="Tên nhóm phượt...">
                 <input type="text" id="group-leader" placeholder="Trưởng nhóm...">
-                <textarea id="group-desc" rows="2" placeholder="Mô tả cung đường, lịch trình chung..."></textarea>
+                <textarea id="group-desc" rows="2" placeholder="Mô tả cung đường..."></textarea>
                 <button class="btn-primary" onclick="createGroup()">Tạo & Lưu Nhóm Mới</button>
             </div>
             <div id="groups-list-container"></div>
@@ -116,7 +123,7 @@
         <div id="tab-finance" class="tab-content">
             <div class="card">
                 <h3 style="font-size: 0.95rem; margin-bottom: 8px;"><i class="fa-solid fa-file-excel" style="color: #16a34a;"></i> Quản Lý Thu Chi Quỹ Pi</h3>
-                <input type="text" id="fin-item" placeholder="Tên khoản thu/chi (VD: Đổ xăng)...">
+                <input type="text" id="fin-item" placeholder="Tên khoản thu/chi...">
                 <input type="number" step="0.01" id="fin-amount" placeholder="Số lượng Pi...">
                 <input type="text" id="fin-user" placeholder="Người đóng góp / Chi trả...">
                 <select id="fin-type">
@@ -167,29 +174,26 @@
                 <textarea id="post-content" rows="3" placeholder="Nội dung trải nghiệm..."></textarea>
                 
                 <label class="file-upload-btn" for="post-file-input">
-                    <i class="fa-solid fa-camera"></i> Chọn Ảnh hoặc Quay/Chọn Video (<60s)
+                    <i class="fa-solid fa-camera"></i> Thêm File (Tối đa 2 Ảnh + 1 Video)
                 </label>
-                <input type="file" id="post-file-input" accept="image/*,video/*" style="display:none;" onchange="previewPostMedia(event)">
+                <input type="file" id="post-file-input" accept="image/*,video/*" multiple style="display:none;" onchange="handleMultiplePostMedia(event)">
                 
-                <div id="post-preview-container" style="font-size: 0.75rem; color: var(--primary); margin-bottom: 6px; font-weight: bold;"></div>
+                <div id="post-preview-list"></div>
                 
-                <div style="display: flex; gap: 4px;">
-                    <button class="btn-secondary" style="background: #ef4444; color: white; margin-top: 0;" onclick="clearPostMedia()"><i class="fa-solid fa-trash"></i> Xóa ảnh/video</button>
-                    <button class="btn-secondary" style="margin-top: 0;" onclick="switchTab('feed', document.querySelector('.nav-item'))"><i class="fa-solid fa-rotate-left"></i> Trở lại</button>
+                <div style="display: flex; gap: 4px; margin-top: 6px;">
+                    <button class="btn-secondary" style="margin-top: 0;" onclick="goBackTab()"><i class="fa-solid fa-rotate-left"></i> Trở lại</button>
+                    <button class="btn-primary" style="margin-top: 0;" onclick="submitPost()">Đăng Bài Ngay</button>
                 </div>
-                <button class="btn-primary" style="margin-top: 6px;" onclick="submitPost()">Đăng Bài Ngay</button>
             </div>
         </div>
 
-        <!-- Tab 7: Chat Cộng Đồng & Nhắn tin riêng -->
+        <!-- Tab 7: Chat Cộng Đồng -->
         <div id="tab-chat" class="tab-content">
             <div class="card">
                 <h3 style="font-size: 0.95rem; margin-bottom: 6px;"><i class="fa-solid fa-comments"></i> Trò Chuyện Cộng Đồng & Nhắn Tin Riêng</h3>
                 <div style="display: flex; gap: 4px; margin-bottom: 6px;">
                     <select id="chat-recipient" style="margin: 0; font-size: 0.75rem;">
                         <option value="ALL">Gửi Chung Cộng Đồng</option>
-                        <option value="Tuấn Pioneer">Nhắn riêng: Tuấn Pioneer</option>
-                        <option value="Giang My">Nhắn riêng: Giang My</option>
                     </select>
                 </div>
                 <div id="chat-box" style="height: 180px; overflow-y: auto; border: 1px solid var(--border-color); padding: 6px; border-radius: 6px; margin-bottom: 6px; background: #fafafa; font-size: 0.8rem;"></div>
@@ -208,6 +212,37 @@
         </div>
     </div>
 
+    <!-- Modal Danh sách Online -->
+    <div class="modal" id="online-users-modal">
+        <div class="modal-card">
+            <h3 style="margin-bottom: 10px; font-size: 1rem; color: var(--primary);"><i class="fa-solid fa-users"></i> Thành Viên Đang Online</h3>
+            <div id="online-users-list"></div>
+            <button class="btn-secondary" onclick="closeModal('online-users-modal')">Đóng</button>
+        </div>
+    </div>
+
+    <!-- Modal Đồng Hồ Thế Giới (5 Nước) -->
+    <div class="modal" id="world-clock-modal">
+        <div class="modal-card">
+            <h3 style="margin-bottom: 10px; font-size: 1rem; color: var(--primary);"><i class="fa-solid fa-globe"></i> Đồng Hồ Giờ Thế Giới</h3>
+            <div class="world-clock-item"><span>🇻🇳 Việt Nam (Đà Nẵng):</span><strong id="time-vn">--:--:--</strong></div>
+            <div class="world-clock-item"><span>🇺🇸 Mỹ (New York):</span><strong id="time-us">--:--:--</strong></div>
+            <div class="world-clock-item"><span>🇯🇵 Nhật Bản (Tokyo):</span><strong id="time-jp">--:--:--</strong></div>
+            <div class="world-clock-item"><span>🇬🇧 Anh (London):</span><strong id="time-uk">--:--:--</strong></div>
+            <div class="world-clock-item"><span>🇦🇺 Úc (Sydney):</span><strong id="time-au">--:--:--</strong></div>
+            <button class="btn-secondary" style="margin-top: 10px;" onclick="closeModal('world-clock-modal')">Đóng</button>
+        </div>
+    </div>
+
+    <!-- Modal Nhật Ký Chỉnh Sửa (Admin Log) -->
+    <div class="modal" id="admin-log-modal">
+        <div class="modal-card">
+            <h3 style="margin-bottom: 10px; font-size: 1rem; color: #ea580c;"><i class="fa-solid fa-user-shield"></i> Nhật Ký Chỉnh Sửa Hệ Thống</h3>
+            <div id="admin-log-list" style="max-height: 200px; overflow-y: auto; font-size: 0.75rem; background: #fff7ed; padding: 6px; border-radius: 6px; border: 1px solid #ffedd5;"></div>
+            <button class="btn-secondary" style="margin-top: 10px;" onclick="closeModal('admin-log-modal')">Đóng</button>
+        </div>
+    </div>
+
     <!-- Modal Đăng nhập -->
     <div class="modal" id="login-modal">
         <div class="modal-card">
@@ -216,7 +251,7 @@
             <input type="password" id="auth-password" placeholder="Mật khẩu...">
             <button class="btn-primary" onclick="loginWithAccount()">Đăng Nhập</button>
             <button class="btn-secondary" onclick="connectPiWallet()">Đăng nhập bằng Ví Pi</button>
-            <button class="btn-secondary" style="background: transparent; color: var(--text-sub);" onclick="closeLoginModal()">Đóng</button>
+            <button class="btn-secondary" style="background: transparent; color: var(--text-sub);" onclick="closeModal('login-modal')">Đóng</button>
         </div>
     </div>
 
@@ -232,32 +267,83 @@
     </nav>
         <script>
         let loggedUser = "bao211221";
-        let defaultPosts = [{
-            author: "Tuấn Pioneer", location: "Sa Pa", timestamp: Date.now() - 300000,
-            content: "Cung đường Ô Quy Hồ hôm nay mây vờn rất đẹp! Đã thanh toán Pi thử nghiệm.",
-            image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500",
-            video: "", likes: 152, comments: ["Cảnh đẹp quá anh ơi!"]
-        }];
+        let lastTabId = "feed";
+        let activeTabId = "feed";
 
-        let tempPostMediaData = { type: "", data: "" };
+        let onlineUsers = ["bao211221", "Tuấn Pioneer", "Giang My", "Hoàng Nam", "Lan Anh", "Phượt Thủ Sài Gòn", "Hùng Sa Pa"];
+        let selectedPostMedia = []; 
         let tempChatMediaData = { type: "", data: "" };
 
-        function previewPostMedia(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                tempPostMediaData.data = e.target.result;
-                tempPostMediaData.type = file.type.includes('video') ? 'video' : 'image';
-                document.getElementById('post-preview-container').innerText = `Đã đính kèm: ${file.name}`;
-            };
-            reader.readAsDataURL(file);
+        let defaultPosts = [{
+            id: 1, author: "Tuấn Pioneer", location: "Sa Pa", timestamp: Date.now() - 300000,
+            content: "Cung đường Ô Quy Hồ hôm nay mây vờn rất đẹp! Đã thanh toán Pi thử nghiệm.",
+            images: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500"],
+            videos: [], likes: 152, comments: ["Cảnh đẹp quá anh ơi!"]
+        }];
+
+        function logAction(actionStr) {
+            let logs = JSON.parse(localStorage.getItem('phuotbui_admin_logs')) || [];
+            logs.unshift({ time: new Date().toLocaleTimeString('vi-VN'), user: loggedUser, action: actionStr });
+            localStorage.setItem('phuotbui_admin_logs', JSON.stringify(logs));
         }
 
-        function clearPostMedia() {
-            tempPostMediaData = { type: "", data: "" };
-            document.getElementById('post-file-input').value = "";
-            document.getElementById('post-preview-container').innerText = "Đã xóa ảnh/video.";
+        function checkAdminRole() {
+            const adminBtn = document.getElementById('admin-log-btn');
+            if (loggedUser === "bao211221") adminBtn.style.display = "flex";
+            else adminBtn.style.display = "none";
+        }
+
+        function switchTab(id, el) {
+            if (activeTabId !== id) { lastTabId = activeTabId; activeTabId = id; }
+            document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
+            const target = document.getElementById('tab-' + id);
+            if(target) target.classList.add('active');
+            if(el) {
+                el.classList.add('active');
+                const badge = el.querySelector('.badge');
+                if(badge) badge.style.display = 'none';
+            }
+        }
+        function goBackTab() { switchTab(lastTabId, document.querySelectorAll('.nav-item')[0]); }
+
+        function handleMultiplePostMedia(event) {
+            const files = Array.from(event.target.files);
+            files.forEach(file => {
+                let imgCount = selectedPostMedia.filter(m => m.type === 'image').length;
+                let vidCount = selectedPostMedia.filter(m => m.type === 'video').length;
+
+                if (file.type.includes('image')) {
+                    if (imgCount >= 2) { alert("Chỉ được chọn tối đa 2 ảnh!"); return; }
+                } else if (file.type.includes('video')) {
+                    if (vidCount >= 1) { alert("Chỉ được chọn tối đa 1 video!"); return; }
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedPostMedia.push({ name: file.name, type: file.type.includes('video') ? 'video' : 'image', data: e.target.result });
+                    renderPostMediaPreview();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function removePostMediaItem(index) {
+            selectedPostMedia.splice(index, 1);
+            renderPostMediaPreview();
+        }
+
+        function renderPostMediaPreview() {
+            const box = document.getElementById('post-preview-list');
+            if(!box) return;
+            box.innerHTML = '';
+            selectedPostMedia.forEach((m, idx) => {
+                box.innerHTML += `
+                    <div class="media-preview-item">
+                        <span><i class="fa-solid ${m.type==='video'?'fa-video':'fa-image'}"></i> ${m.name}</span>
+                        <button onclick="removePostMediaItem(${idx})">Xóa</button>
+                    </div>`;
+            });
         }
 
         function previewChatMedia(event) {
@@ -272,78 +358,6 @@
             reader.readAsDataURL(file);
         }
 
-        function timeAgo(timestamp) {
-            const seconds = Math.floor((Date.now() - timestamp) / 1000);
-            if (seconds < 60) return "Vừa xong";
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `${minutes} phút trước`;
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return `${hours} giờ trước`;
-            const days = Math.floor(hours / 24);
-            return `${days} ngày trước`;
-        }
-
-        // Cập nhật đồng hồ và biến động giá Pi theo thời gian thực (mỗi 60 giây)
-        setInterval(() => {
-            const now = new Date();
-            const el = document.getElementById('live-clock');
-            if(el) el.innerText = now.toLocaleTimeString('vi-VN', { hour12: false });
-        }, 1000);
-
-        let countdownSec = 60;
-        async function fetchRealtimePiPrice() {
-            try {
-                const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pi-network-iou&vs_currencies=usd');
-                const data = await res.json();
-                if (data && data['pi-network-iou']) {
-                    let livePrice = data['pi-network-iou'].usd;
-                    // Thêm dao động nhẹ thời gian thực để mô phỏng biến động khớp lệnh sàn
-                    let fluctuation = (Math.random() - 0.5) * 0.002;
-                    let finalPrice = Math.max(0.01, livePrice + fluctuation);
-                    document.getElementById('pi-price-tag').innerText = `$${finalPrice.toFixed(4)}`;
-                }
-            } catch(e) {
-                document.getElementById('pi-price-tag').innerText = `$0.0770`;
-            }
-        }
-        fetchRealtimePiPrice();
-
-        setInterval(() => {
-            countdownSec--;
-            const countEl = document.getElementById('pi-countdown');
-            if(countEl) countEl.innerHTML = `<i class="fa-solid fa-rotate"></i> ${countdownSec}s`;
-            if(countdownSec <= 0) {
-                fetchRealtimePiPrice();
-                countdownSec = 60;
-            }
-        }, 1000);
-
-        function copyWalletAddress() {
-            const inputEl = document.getElementById('wallet-address-input');
-            inputEl.select();
-            inputEl.setSelectionRange(0, 99999);
-            try {
-                navigator.clipboard.writeText(inputEl.value);
-                alert("Đã sao chép địa chỉ ví Quỹ thành công!");
-            } catch(err) {
-                document.execCommand('copy');
-                alert("Đã sao chép địa chỉ ví Quỹ!");
-            }
-        }
-
-        function switchTab(id, el) {
-            document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-            const target = document.getElementById('tab-' + id);
-            if(target) target.classList.add('active');
-            if(el) {
-                el.classList.add('active');
-                const badge = el.querySelector('.badge');
-                if(badge) badge.style.display = 'none';
-            }
-        }
-
-        // Bảng tin
         function loadPosts() {
             let posts = JSON.parse(localStorage.getItem('phuotbui_posts'));
             if (!posts) { posts = defaultPosts; localStorage.setItem('phuotbui_posts', JSON.stringify(posts)); }
@@ -356,17 +370,23 @@
                     p.comments.forEach(c => { cHtml += `<div class="comment-item">• ${c}</div>`; });
                 } else { cHtml = `<div class="comment-item" style="color:var(--text-sub);">Chưa có bình luận.</div>`; }
                 
-                let mediaHtml = '';
-                if(p.video) mediaHtml = `<video src="${p.video}" controls class="post-video"></video>`;
-                else if(p.image) mediaHtml = `<img src="${p.image}" class="post-img">`;
+                let mediaHtml = '<div class="post-media-grid">';
+                if(p.images) p.images.forEach(img => { mediaHtml += `<img src="${img}" class="post-img">`; });
+                if(p.videos) p.videos.forEach(vid => { mediaHtml += `<video src="${vid}" controls class="post-video"></video>`; });
+                mediaHtml += '</div>';
 
-                let timeStr = p.timestamp ? timeAgo(p.timestamp) : "Vừa đăng";
+                let deleteBtn = (p.author === loggedUser || loggedUser === "bao211221") 
+                    ? `<button onclick="deletePost(${idx})" style="background:none; border:none; color:#ef4444; font-weight:bold; cursor:pointer; font-size:0.75rem;"><i class="fa-solid fa-trash"></i> Xóa bài</button>` 
+                    : '';
 
                 container.innerHTML += `
                     <div class="card">
                         <div class="post-header">
-                            <div class="avatar">${p.author.charAt(0).toUpperCase()}</div>
-                            <div><strong>${p.author}</strong><p style="font-size:0.68rem; color:var(--text-sub);">${timeStr} • ${p.location}</p></div>
+                            <div class="post-header-left">
+                                <div class="avatar">${p.author.charAt(0).toUpperCase()}</div>
+                                <div><strong>${p.author}</strong><p style="font-size:0.68rem; color:var(--text-sub);">${p.timestamp ? timeAgo(p.timestamp) : "Vừa đăng"} • ${p.location}</p></div>
+                            </div>
+                            ${deleteBtn}
                         </div>
                         <p style="font-size:0.85rem;">${p.content}</p>${mediaHtml}
                         <div class="post-actions">
@@ -392,20 +412,30 @@
             if(!title || !content) { alert("Nhập tiêu đề và nội dung!"); return; }
             
             let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
+            let imgs = selectedPostMedia.filter(m => m.type === 'image').map(m => m.data);
+            let vids = selectedPostMedia.filter(m => m.type === 'video').map(m => m.data);
+
             posts.unshift({ 
-                author: loggedUser || "Phượt Thủ", location: loc, timestamp: Date.now(), 
+                id: Date.now(), author: loggedUser || "Phượt Thủ", location: loc, timestamp: Date.now(), 
                 content: `<strong>${title}</strong><br>${content}`, 
-                image: tempPostMediaData.type === 'image' ? tempPostMediaData.data : "", 
-                video: tempPostMediaData.type === 'video' ? tempPostMediaData.data : "", 
-                likes: 1, comments: [] 
+                images: imgs, videos: vids, likes: 1, comments: [] 
             });
             localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
+            logAction(`Đã đăng bài viết mới: "${title}"`);
             alert("Đăng bài thành công!");
-            document.getElementById('post-title').value = ''; 
-            document.getElementById('post-location').value = ''; 
-            document.getElementById('post-content').value = '';
-            clearPostMedia();
+            document.getElementById('post-title').value = ''; document.getElementById('post-location').value = ''; document.getElementById('post-content').value = '';
+            selectedPostMedia = []; renderPostMediaPreview();
             loadPosts(); switchTab('feed', document.querySelector('.nav-item'));
+        }
+
+        function deletePost(idx) {
+            if(confirm("Bạn có chắc chắn muốn xóa bài đăng này không?")) {
+                let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
+                posts.splice(idx, 1);
+                localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
+                logAction(`Đã xóa bài viết index ${idx}`);
+                loadPosts();
+            }
         }
 
         function likePost(idx) {
@@ -425,7 +455,97 @@
             loadPosts();
         }
 
-        // Nhóm & Thành viên
+        function timeAgo(timestamp) {
+            const seconds = Math.floor((Date.now() - timestamp) / 1000);
+            if (seconds < 60) return "Vừa xong";
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} phút trước`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} giờ trước`;
+            return `${Math.floor(hours / 24)} ngày trước`;
+        }
+                </script>
+                    <script>
+        let countdownSec = 60;
+        async function fetchRealtimePiPrice() {
+            try {
+                const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pi-network-iou&vs_currencies=usd');
+                const data = await res.json();
+                if (data && data['pi-network-iou']) {
+                    let livePrice = data['pi-network-iou'].usd + (Math.random() - 0.5) * 0.0015;
+                    document.getElementById('pi-price-tag').innerText = `$${Math.max(0.01, livePrice).toFixed(4)}`;
+                }
+            } catch(e) { document.getElementById('pi-price-tag').innerText = `$0.0770`; }
+        }
+        fetchRealtimePiPrice();
+
+        setInterval(() => {
+            const now = new Date();
+            const el = document.getElementById('live-clock');
+            if(el) el.innerText = now.toLocaleTimeString('vi-VN', { hour12: false });
+            
+            countdownSec--;
+            document.getElementById('pi-sec').innerText = `${countdownSec}s`;
+            if(countdownSec <= 0) { fetchRealtimePiPrice(); countdownSec = 60; }
+        }, 1000);
+
+        function openWorldClockModal() {
+            document.getElementById('world-clock-modal').classList.add('active');
+            updateWorldClocks();
+        }
+        function updateWorldClocks() {
+            const now = new Date();
+            document.getElementById('time-vn').innerText = now.toLocaleTimeString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
+            document.getElementById('time-us').innerText = now.toLocaleTimeString('en-US', { timeZone: 'America/New_York' });
+            document.getElementById('time-jp').innerText = now.toLocaleTimeString('ja-JP', { timeZone: 'Asia/Tokyo' });
+            document.getElementById('time-uk').innerText = now.toLocaleTimeString('en-GB', { timeZone: 'Europe/London' });
+            document.getElementById('time-au').innerText = now.toLocaleTimeString('en-AU', { timeZone: 'Australia/Sydney' });
+        }
+        setInterval(updateWorldClocks, 1000);
+
+        function openOnlineUsersModal() {
+            const modal = document.getElementById('online-users-modal');
+            const container = document.getElementById('online-users-list');
+            container.innerHTML = '';
+            onlineUsers.forEach(u => {
+                container.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px dashed #e2e8f0; font-size:0.8rem;">
+                        <span><i class="fa-solid fa-user-check" style="color:#059669;"></i> ${u}</span>
+                        <div>
+                            <button onclick="directChatWith('${u}')" style="background:var(--primary); color:white; border:none; padding:3px 6px; border-radius:4px; font-size:0.7rem;">Nhắn riêng</button>
+                            <button onclick="inviteToGroup('${u}')" style="background:#059669; color:white; border:none; padding:3px 6px; border-radius:4px; font-size:0.7rem;">Thêm nhóm</button>
+                        </div>
+                    </div>`;
+            });
+            modal.classList.add('active');
+        }
+
+        function directChatWith(user) {
+            closeModal('online-users-modal');
+            switchTab('chat', document.querySelectorAll('.nav-item')[6]);
+            const select = document.getElementById('chat-recipient');
+            if(!Array.from(select.options).some(o => o.value === user)) {
+                select.innerHTML += `<option value="${user}">Nhắn riêng: ${user}</option>`;
+            }
+            select.value = user;
+        }
+
+        function inviteToGroup(user) {
+            let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [];
+            if(groups.length === 0) { alert("Chưa có nhóm nào! Hãy tạo nhóm trước."); return; }
+            let gNames = groups.map((g, i) => `${i+1}. ${g.name}`).join("\n");
+            let choice = prompt(`Chọn nhóm muốn thêm ${user} vào (Nhập số):\n${gNames}`);
+            let idx = parseInt(choice) - 1;
+            if(!isNaN(idx) && groups[idx]) {
+                if(!groups[idx].members) groups[idx].members = [];
+                groups[idx].members.push(user);
+                localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
+                logAction(`Đã thêm ${user} vào nhóm ${groups[idx].name}`);
+                alert(`Đã thêm ${user} vào nhóm thành công!`);
+                loadGroups();
+            }
+        }
+
         function createGroup() {
             const name = document.getElementById('group-name').value;
             const leader = document.getElementById('group-leader').value;
@@ -434,20 +554,22 @@
             let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [];
             groups.unshift({ name, leader: leader || loggedUser, desc, members: [leader || loggedUser] });
             localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
+            logAction(`Đã tạo nhóm phượt mới: "${name}"`);
             alert("Đã tạo nhóm thành công!");
             document.getElementById('group-name').value = ''; document.getElementById('group-leader').value = ''; document.getElementById('group-desc').value = '';
             loadGroups();
         }
 
         function addMemberToGroup(gIndex) {
-            const newMem = prompt("Nhập tên thành viên muốn thêm vào nhóm:");
-            if(!newMem) return;
+            const inputVal = prompt("Nhập tên thành viên HOẶC Mã mời để thêm vào nhóm:");
+            if(!inputVal) return;
             let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [];
             if(!groups[gIndex].members) groups[gIndex].members = [];
-            groups[gIndex].members.push(newMem);
+            groups[gIndex].members.push(inputVal);
             localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
+            logAction(`Đã thêm thành viên/mã mời "${inputVal}" vào nhóm ${groups[gIndex].name}`);
             loadGroups();
-            alert(`Đã thêm thành viên ${newMem} vào nhóm thành công!`);
+            alert(`Đã kết nạp ${inputVal} vào nhóm thành công!`);
         }
 
         function loadGroups() {
@@ -465,12 +587,11 @@
                         <p style="font-size:0.75rem; color: var(--primary);">Trưởng nhóm: ${g.leader}</p>
                         <p style="font-size:0.8rem; color: var(--text-sub); margin-top:4px;">${g.desc}</p>
                         <p style="font-size:0.75rem; margin-top:6px;"><strong>Thành viên (${g.members ? g.members.length : 1}):</strong> ${memsHtml}</p>
-                        <button class="btn-secondary" style="font-size:0.75rem; padding:4px; margin-top:6px;" onclick="addMemberToGroup(${idx})"><i class="fa-solid fa-user-plus"></i> Thêm thành viên</button>
+                        <button class="btn-secondary" style="font-size:0.75rem; padding:4px; margin-top:6px;" onclick="addMemberToGroup(${idx})"><i class="fa-solid fa-user-plus"></i> Thêm thành viên / Mã mời</button>
                     </div>`;
             });
         }
 
-        // Thu Chi Pi
         function addFinanceItem() {
             const item = document.getElementById('fin-item').value;
             const amount = parseFloat(document.getElementById('fin-amount').value);
@@ -481,9 +602,8 @@
             let finList = JSON.parse(localStorage.getItem('phuotbui_finance_pi')) || [];
             finList.push({ item, amount, user, type });
             localStorage.setItem('phuotbui_finance_pi', JSON.stringify(finList));
-            document.getElementById('fin-item').value = '';
-            document.getElementById('fin-amount').value = '';
-            document.getElementById('fin-user').value = '';
+            logAction(`Đã thêm sổ thu chi: ${type} ${amount} Pi cho ${item}`);
+            document.getElementById('fin-item').value = ''; document.getElementById('fin-amount').value = ''; document.getElementById('fin-user').value = '';
             loadFinance();
         }
 
@@ -520,31 +640,45 @@
             document.getElementById('finance-summary').innerText = `Tổng quỹ hiện tại: ${totalPi.toFixed(2)} Pi`;
         }
 
-        function addTripSchedule() {
-            const t = document.getElementById('trip-title').value, d = document.getElementById('trip-date').value, n = document.getElementById('trip-notes').value;
-            if(!t || !d) { alert("Nhập tên và ngày khởi hành!"); return; }
-            document.getElementById('trip-list-container').innerHTML = `<div class="card" style="border-left:4px solid var(--primary);"><strong>${t}</strong><p style="font-size:0.75rem; color:var(--primary);">Khởi hành: ${d}</p><p style="font-size:0.8rem;">${n || "Không có ghi chú."}</p></div>` + document.getElementById('trip-list-container').innerHTML;
-            alert("Đã thêm lịch trình!");
+        function openAdminLogModal() {
+            let logs = JSON.parse(localStorage.getItem('phuotbui_admin_logs')) || [];
+            const container = document.getElementById('admin-log-list');
+            container.innerHTML = '';
+            if(logs.length === 0) container.innerHTML = '<p style="color:var(--text-sub);">Chưa có nhật ký hoạt động.</p>';
+            logs.forEach(l => {
+                container.innerHTML += `<p style="margin-bottom:4px; border-bottom:1px dashed #fdba74;">[${l.time}] <strong>${l.user}</strong>: ${l.action}</p>`;
+            });
+            document.getElementById('admin-log-modal').classList.add('active');
         }
 
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         function openLoginModal() { document.getElementById('login-modal').classList.add('active'); }
-        function closeLoginModal() { document.getElementById('login-modal').classList.remove('active'); }
+
         function loginWithAccount() {
             const u = document.getElementById('auth-username').value;
-            if(u) { loggedUser = u; document.getElementById('user-display-name').innerText = u; closeLoginModal(); alert("Đăng nhập thành công!"); }
-            else alert("Nhập tên tài khoản!");
+            if(u) { 
+                loggedUser = u; document.getElementById('user-display-name').innerText = u; 
+                checkAdminRole(); closeModal('login-modal'); alert("Đăng nhập thành công!"); 
+            } else alert("Nhập tên tài khoản!");
         }
+
         async function connectPiWallet() {
             try {
                 if (typeof Pi !== 'undefined') {
                     await Pi.init({ version: "2.0", apiKey: "82whbncni0u42en2cirvedpeu5kfwti3cpky1tgltvjctvj1gnukmldkkq2ptrl" });
                     const auth = await Pi.authenticate(['username'], function(){});
-                    loggedUser = auth.user.username; document.getElementById('user-display-name').innerText = loggedUser; closeLoginModal();
-                } else { loggedUser = "bao211221"; document.getElementById('user-display-name').innerText = loggedUser; closeLoginModal(); }
-            } catch(e) { loggedUser = "bao211221"; document.getElementById('user-display-name').innerText = loggedUser; closeLoginModal(); }
+                    loggedUser = auth.user.username; document.getElementById('user-display-name').innerText = loggedUser; 
+                    checkAdminRole(); closeModal('login-modal');
+                } else { 
+                    loggedUser = "bao211221"; document.getElementById('user-display-name').innerText = loggedUser; 
+                    checkAdminRole(); closeModal('login-modal'); 
+                }
+            } catch(e) { 
+                loggedUser = "bao211221"; document.getElementById('user-display-name').innerText = loggedUser; 
+                checkAdminRole(); closeModal('login-modal'); 
+            }
         }
 
-        // Chat
         function sendChatMessage() {
             const m = document.getElementById('chat-msg').value.trim();
             const recipient = document.getElementById('chat-recipient').value;
@@ -568,7 +702,7 @@
 
         function loadChat() {
             let chatHistory = JSON.parse(localStorage.getItem('phuotbui_chat')) || [
-                { user: "Hệ thống", recipient: "ALL", msg: "Chào mừng các phượt thủ đến với phòng chat cộng đồng!", image: "", video: "" }
+                { user: "Hệ thống", recipient: "ALL", msg: "Chào mừng phượt thủ!", image: "", video: "" }
             ];
             const box = document.getElementById('chat-box');
             if(!box) return;
@@ -579,13 +713,20 @@
                 else if(c.image) mediaHtml = `<br><img src="${c.image}" style="max-width:100%; max-height:150px; border-radius:4px; margin-top:4px;">`;
                 
                 let tagPriv = c.recipient !== "ALL" ? `<span style="color: #9333ea; font-size: 0.68rem;">[Riêng tư tới ${c.recipient}]</span>` : "";
-
                 box.innerHTML += `<p style="margin-top:6px; border-bottom:1px dashed #e2e8f0; padding-bottom:4px;"><strong>${c.user}</strong> ${tagPriv}: ${c.msg} ${mediaHtml}</p>`;
             });
             box.scrollTop = box.scrollHeight;
         }
 
+        function addTripSchedule() {
+            const t = document.getElementById('trip-title').value, d = document.getElementById('trip-date').value, n = document.getElementById('trip-notes').value;
+            if(!t || !d) { alert("Nhập tên và ngày khởi hành!"); return; }
+            document.getElementById('trip-list-container').innerHTML = `<div class="card" style="border-left:4px solid var(--primary);"><strong>${t}</strong><p style="font-size:0.75rem; color:var(--primary);">Khởi hành: ${d}</p><p style="font-size:0.8rem;">${n || "Không có ghi chú."}</p></div>` + document.getElementById('trip-list-container').innerHTML;
+            alert("Đã thêm lịch trình!");
+        }
+
         window.onload = function() {
+            checkAdminRole();
             loadPosts();
             loadGroups();
             loadFinance();
