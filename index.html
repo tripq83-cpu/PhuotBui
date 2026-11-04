@@ -6,9 +6,6 @@
     <title>PHƯỢT BỤI - Du Lịch Bụi Không Biên Giới</title>
     <!-- Pi Network SDK -->
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <!-- OpenStreetMap Leaflet CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -55,7 +52,7 @@
             font-weight: 600;
         }
 
-        /* Widgets Bar */
+        /* Widgets Bar (Đồng hồ & Tỷ giá OKX) */
         .widgets-bar {
             display: flex;
             gap: 8px;
@@ -77,7 +74,7 @@
             border: 1px solid #e2e8f0;
         }
 
-        /* Main Container */
+        /* Container & Tabs */
         .container { padding: 12px; max-width: 600px; margin: 0 auto; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -97,8 +94,18 @@
         .post-actions { display: flex; justify-content: space-around; border-top: 1px solid var(--border-color); pt: 8px; margin-top: 8px; color: var(--text-sub); font-size: 0.82rem; }
         .post-actions span { cursor: pointer; display: flex; align-items: center; gap: 4px; }
 
-        /* Map Container */
-        #map { height: 320px; width: 100%; border-radius: 10px; border: 1px solid var(--border-color); margin-top: 8px; }
+        /* Google Maps Container */
+        .map-search-box {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        #map-frame {
+            width: 100%;
+            height: 320px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+        }
 
         /* Store Item */
         .store-item {
@@ -183,15 +190,15 @@
         </button>
     </header>
 
-    <!-- Widgets Bar (Đồng hồ & Tỷ giá) -->
+    <!-- Widgets Bar (Đồng hồ & Tỷ giá sàn OKX) -->
     <div class="widgets-bar">
         <div class="widget-item">
             <i class="fa-solid fa-clock" style="color: var(--primary);"></i>
             <span id="live-clock">Đang tải giờ...</span>
         </div>
         <div class="widget-item">
-            <i class="fa-solid fa-coins" style="color: #d97706;"></i>
-            <span>Giá Pi Testnet: <strong>$314,159</strong></span>
+            <i class="fa-solid fa-chart-line" style="color: #059669;"></i>
+            <span>Giá Pi (OKX): <strong id="pi-price-tag" style="color: #059669;">Đang tải...</strong></span>
         </div>
         <div class="widget-item">
             <i class="fa-solid fa-sun" style="color: #eab308;"></i>
@@ -213,192 +220,14 @@
                 </button>
             </div>
 
-            <div class="card">
-                <div class="post-header">
-                    <div class="avatar">PB</div>
-                    <div>
-                        <strong>Tuấn Pioneer</strong>
-                        <p style="font-size: 0.72rem; color: var(--text-sub);">Vừa đăng • Sa Pa, Lào Cai</p>
-                    </div>
-                </div>
-                <p style="font-size: 0.9rem;">Cung đường phượt Ô Quy Hồ hôm nay mây vờn rất đẹp! Khách sạn ở đây đã nhận thanh toán thử nghiệm Pi cho phượt thủ.</p>
-                <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500" class="post-img" alt="Sapa">
-                <div class="post-actions">
-                    <span onclick="likePost(this)"><i class="fa-regular fa-heart"></i> <span class="like-count">152</span> Thích</span>
-                    <span onclick="alert('Tính năng bình luận đang mở!')"><i class="fa-regular fa-comment"></i> 24 Bình luận</span>
-                    <span onclick="alert('Đã sao chép liên kết chia sẻ!')"><i class="fa-solid fa-share"></i> Chia sẻ</span>
-                </div>
-            </div>
+            <!-- Khung chứa các bài viết mới đăng -->
+            <div id="posts-feed-container"></div>
         </div>
 
-        <!-- Tab 2: Bản Đồ (OpenStreetMap) -->
+        <!-- Tab 2: Bản Đồ Google Maps Thật -->
         <div id="tab-map" class="tab-content">
             <div class="card">
-                <h3 style="font-size: 1rem;"><i class="fa-solid fa-map-marked-alt"></i> Bản Đồ Điểm Phượt & Trạm Dừng</h3>
-                <p style="font-size: 0.78rem; color: var(--text-sub); margin-top: 2px;">Xem vị trí các trạm chấp nhận Pi trên toàn quốc.</p>
-                <div id="map"></div>
-            </div>
-        </div>
-
-        <!-- Tab 3: Đăng Bài -->
-        <div id="tab-post" class="tab-content">
-            <div class="card">
-                <h3 style="font-size: 1rem; margin-bottom: 10px;"><i class="fa-solid fa-pen-to-square"></i> Chia Sẻ Điểm Đến Mới</h3>
-                <input type="text" id="post-title" placeholder="Tiêu đề bài viết (VD: Cung đường Phượt Măng Đen)...">
-                <input type="text" id="post-location" placeholder="Địa điểm (VD: Đà Nẵng, Hà Giang...)">
-                <textarea id="post-content" rows="4" placeholder="Kể về trải nghiệm chuyến đi của bạn..."></textarea>
-                <button class="btn-primary" onclick="submitPost()"><i class="fa-solid fa-paper-plane"></i> Đăng Bài Ngay</button>
-            </div>
-        </div>
-
-        <!-- Tab 4: Cửa Hàng -->
-        <div id="tab-stores" class="tab-content">
-            <h3 style="font-size: 1rem; margin-bottom: 8px;">Cửa Hàng Chấp Nhận Pi</h3>
-            <div class="store-item">
-                <div>
-                    <strong>Phượt Homestay Đà Nẵng</strong>
-                    <p style="font-size: 0.78rem; color: var(--text-sub);">Quận Sơn Trà, TP. Đà Nẵng</p>
-                </div>
-                <span class="store-tag">100% Pi</span>
-            </div>
-            <div class="store-item">
-                <div>
-                    <strong>Quán Cà Phê Phượt Bụi</strong>
-                    <p style="font-size: 0.78rem; color: var(--text-sub);">Thành phố Buôn Ma Thuột</p>
-                </div>
-                <span class="store-tag">50% Pi</span>
-            </div>
-        </div>
-
-        <!-- Tab 5: Chat -->
-        <div id="tab-chat" class="tab-content">
-            <div class="card">
-                <h3 style="font-size: 1rem; margin-bottom: 8px;"><i class="fa-solid fa-comments"></i> Trò Chuyện Cộng Đồng</h3>
-                <div id="chat-box" style="height: 220px; overflow-y: auto; border: 1px solid var(--border-color); padding: 8px; border-radius: 6px; margin-bottom: 8px; background: #fafafa; font-size: 0.85rem;">
-                    <p style="color: var(--text-sub);"><strong>[Hệ thống]:</strong> Chào mừng anh Nghĩa đến với phòng Chat Phượt Bụi!</p>
-                </div>
-                <div style="display: flex; gap: 6px;">
-                    <input type="text" id="chat-msg" placeholder="Nhập tin nhắn..." style="margin: 0;">
-                    <button class="btn-primary" style="width: 70px;" onclick="sendChatMessage()">Gửi</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bottom Navigation Bar -->
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('feed', this)">
-            <i class="fa-solid fa-newspaper"></i>
-            Bảng tin
-        </div>
-        <div class="nav-item" onclick="switchTab('map', this)">
-            <i class="fa-solid fa-map-location-dot"></i>
-            Bản đồ
-        </div>
-        <div class="nav-item" onclick="switchTab('post', this)">
-            <i class="fa-solid fa-circle-plus" style="color: var(--primary); font-size: 1.3rem;"></i>
-            Đăng bài
-        </div>
-        <div class="nav-item" onclick="switchTab('stores', this)">
-            <i class="fa-solid fa-store"></i>
-            Cửa hàng
-        </div>
-        <div class="nav-item" onclick="switchTab('chat', this)">
-            <i class="fa-solid fa-comments"></i>
-            Chat
-        </div>
-    </nav>
-
-    <script>
-        let currentUser = null;
-        let mapInitialized = false;
-
-        // Đồng hồ chạy chuẩn giờ Việt Nam
-        function updateClock() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('vi-VN', { hour12: false });
-            const dateStr = now.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
-            document.getElementById('live-clock').innerText = `${timeStr} (${dateStr})`;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        // Chuyển Tab
-        function switchTab(tabId, element) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById('tab-' + tabId).classList.add('active');
-            element.classList.add('active');
-
-            if (tabId === 'map' && !mapInitialized) {
-                setTimeout(loadOpenStreetMap, 200);
-                mapInitialized = true;
-            }
-        }
-
-        // Bản đồ OpenStreetMap không bị lỗi Key
-        function loadOpenStreetMap() {
-            const map = L.map('map').setView([16.0544, 108.2022], 6);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap'
-            }).addTo(map);
-
-            L.marker([16.0544, 108.2022]).addTo(map).bindPopup('<b>Đà Nẵng</b><br>Trạm dừng phượt chính.');
-            L.marker([22.3364, 103.8438]).addTo(map).bindPopup('<b>Sa Pa</b><br>Homestay chấp nhận Pi.');
-        }
-
-        // Kết nối ví Pi SDK
-        async function connectPiWallet() {
-            try {
-                if (typeof Pi !== 'undefined') {
-                    await Pi.init({ version: "2.0", apiKey: "82whbncni0u42en2cirvedpeu5kfwti3cpky1tgltvjctvj1gnukmldkkq2ptrl" });
-                    const auth = await Pi.authenticate(['username'], function(p){});
-                    currentUser = auth.user;
-                    document.getElementById('user-status').innerText = auth.user.username;
-                    alert("Kết nối thành công Pioneer: " + auth.user.username);
-                } else {
-                    alert("Đang chạy ngoài môi trường Pi Browser. Đã kết nối ví mô phỏng Testnet!");
-                    document.getElementById('user-status').innerText = "Pioneer Test";
-                }
-            } catch(e) {
-                alert("Xác thực Pi kết nối thành công!");
-                document.getElementById('user-status').innerText = "Pioneer kết nối";
-            }
-        }
-
-        // Thao tác ủng hộ
-        function donatePiAction() {
-            alert("Địa chỉ ví nhận ủng hộ:\nGAXQ6UVRVI5BX7BMWJ5RV6TNGY3EG4YZETMNPQTEY7KTC5SUFGMCL2PK\n\nCảm ơn anh đã chung tay xây dựng Quỹ Phượt Bụi!");
-        }
-
-        // Đăng bài
-        function submitPost() {
-            const title = document.getElementById('post-title').value;
-            if(!title) { alert("Vui lòng nhập tiêu đề bài viết!"); return; }
-            alert("Bài viết đã được gửi thành công!");
-            document.getElementById('post-title').value = '';
-            document.getElementById('post-location').value = '';
-            document.getElementById('post-content').value = '';
-            switchTab('feed', document.querySelectorAll('.nav-item')[0]);
-        }
-
-        // Chat
-        function sendChatMessage() {
-            const msg = document.getElementById('chat-msg').value;
-            if(!msg) return;
-            const chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML += `<p style="margin-top:4px;"><strong>Tôi:</strong> ${msg}</p>`;
-            document.getElementById('chat-msg').value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        // Thả tim
-        function likePost(btn) {
-            const countSpan = btn.querySelector('.like-count');
-            countSpan.innerText = parseInt(countSpan.innerText) + 1;
-            btn.style.color = '#dc2626';
-        }
-    </script>
-</body>
-</html>
+                <h3 style="font-size: 1rem; margin-bottom: 6px;"><i class="fa-solid fa-map-marked-alt"></i> Google Maps Điểm Phượt</h3>
+                <div class="map-search-box">
+                    <input type="text" id="map-search-input" placeholder="Nhập địa điểm (VD: Sơn Trà Đà Nẵng)..." style="margin: 0;">
+                    
