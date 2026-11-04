@@ -22,7 +22,7 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-main); padding-bottom: 75px; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-bottom: 80px; }
 
         /* Header */
         header {
@@ -52,7 +52,7 @@
             font-weight: 600;
         }
 
-        /* Widgets Bar (Đồng hồ & Tỷ giá OKX) */
+        /* Widgets Bar */
         .widgets-bar {
             display: flex;
             gap: 8px;
@@ -91,23 +91,14 @@
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem; }
         .post-img { width: 100%; border-radius: 8px; margin: 8px 0; max-height: 220px; object-fit: cover; }
-        .post-actions { display: flex; justify-content: space-around; border-top: 1px solid var(--border-color); pt: 8px; margin-top: 8px; color: var(--text-sub); font-size: 0.82rem; }
+        .post-actions { display: flex; justify-content: space-around; border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 8px; color: var(--text-sub); font-size: 0.82rem; }
         .post-actions span { cursor: pointer; display: flex; align-items: center; gap: 4px; }
 
-        /* Google Maps Container */
-        .map-search-box {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-        #map-frame {
-            width: 100%;
-            height: 320px;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-        }
+        /* Map */
+        .map-search-box { display: flex; gap: 6px; margin-bottom: 8px; }
+        #map-frame { width: 100%; height: 300px; border: 1px solid var(--border-color); border-radius: 10px; }
 
-        /* Store Item */
+        /* Stores */
         .store-item {
             background: var(--card-bg);
             padding: 12px;
@@ -120,22 +111,22 @@
         }
         .store-tag { background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; }
 
-        /* Bottom Nav */
+        /* Bottom Nav fixed */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             background: #ffffff;
-            border-top: 1px solid var(--border-color);
+            border-top: 2px solid var(--border-color);
             display: flex;
             justify-content: space-around;
-            padding: 8px 0;
-            z-index: 1000;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            padding: 10px 0;
+            z-index: 9999;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
         }
         .nav-item { color: var(--text-sub); text-align: center; text-decoration: none; font-size: 0.72rem; cursor: pointer; flex: 1; }
-        .nav-item i { font-size: 1.1rem; display: block; margin-bottom: 2px; }
+        .nav-item i { font-size: 1.2rem; display: block; margin-bottom: 2px; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
 
         /* Inputs & Buttons */
@@ -185,24 +176,24 @@
             <h1><i class="fa-solid fa-compass"></i> PHƯỢT BỤI</h1>
             <p>Du Lịch Bụi Không Biên Giới</p>
         </div>
-        <button class="user-btn" id="login-btn" onclick="connectPiWallet()">
+        <button class="user-btn" onclick="connectPiWallet()">
             <i class="fa-solid fa-wallet"></i> <span id="user-status">Kết nối ví Pi</span>
         </button>
     </header>
 
-    <!-- Widgets Bar (Đồng hồ & Tỷ giá sàn OKX) -->
+    <!-- Widgets Bar -->
     <div class="widgets-bar">
         <div class="widget-item">
             <i class="fa-solid fa-clock" style="color: var(--primary);"></i>
-            <span id="live-clock">Đang tải giờ...</span>
+            <span id="live-clock">--:--:--</span>
         </div>
         <div class="widget-item">
             <i class="fa-solid fa-chart-line" style="color: #059669;"></i>
-            <span>Giá Pi (OKX): <strong id="pi-price-tag" style="color: #059669;">Đang tải...</strong></span>
+            <span>Giá Pi (OKX): <strong id="pi-price-tag" style="color: #059669;">$38.50</strong></span>
         </div>
         <div class="widget-item">
             <i class="fa-solid fa-sun" style="color: #eab308;"></i>
-            <span>Đà Nẵng: <strong>29°C Nắng</strong></span>
+            <span>Đà Nẵng: <strong>29°C</strong></span>
         </div>
     </div>
 
@@ -220,14 +211,257 @@
                 </button>
             </div>
 
-            <!-- Khung chứa các bài viết mới đăng -->
+            <!-- Khung chứa bài viết -->
             <div id="posts-feed-container"></div>
         </div>
 
-        <!-- Tab 2: Bản Đồ Google Maps Thật -->
+        <!-- Tab 2: Bản Đồ Google Maps -->
         <div id="tab-map" class="tab-content">
             <div class="card">
                 <h3 style="font-size: 1rem; margin-bottom: 6px;"><i class="fa-solid fa-map-marked-alt"></i> Google Maps Điểm Phượt</h3>
                 <div class="map-search-box">
-                    <input type="text" id="map-search-input" placeholder="Nhập địa điểm (VD: Sơn Trà Đà Nẵng)..." style="margin: 0;">
-                    
+                    <input type="text" id="map-search-input" placeholder="Nhập địa điểm (VD: Đà Nẵng)..." style="margin: 0;">
+                    <button class="btn-primary" style="width: 80px;" onclick="searchGoogleMap()">Tìm</button>
+                </div>
+                <iframe id="map-frame" src="https://maps.google.com/maps?q=Đà%20Nẵng&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no"></iframe>
+            </div>
+        </div>
+
+        <!-- Tab 3: Đăng Bài -->
+        <div id="tab-post" class="tab-content">
+            <div class="card">
+                <h3 style="font-size: 1rem; margin-bottom: 10px;"><i class="fa-solid fa-pen-to-square"></i> Chia Sẻ Điểm Đến Mới</h3>
+                <input type="text" id="post-title" placeholder="Tiêu đề bài viết...">
+                <input type="text" id="post-location" placeholder="Địa điểm (VD: Đà Nẵng, Hà Giang...)">
+                <input type="text" id="post-img-url" placeholder="Đường dẫn ảnh (Không bắt buộc)...">
+                <textarea id="post-content" rows="4" placeholder="Kể về trải nghiệm chuyến đi của bạn..."></textarea>
+                <button class="btn-primary" onclick="submitPost()"><i class="fa-solid fa-paper-plane"></i> Đăng Bài Ngay</button>
+            </div>
+        </div>
+
+        <!-- Tab 4: Cửa Hàng -->
+        <div id="tab-stores" class="tab-content">
+            <h3 style="font-size: 1rem; margin-bottom: 8px;">Cửa Hàng Chấp Nhận Pi</h3>
+            <div class="store-item">
+                <div>
+                    <strong>Phượt Homestay Đà Nẵng</strong>
+                    <p style="font-size: 0.78rem; color: var(--text-sub);">Quận Sơn Trà, TP. Đà Nẵng</p>
+                </div>
+                <span class="store-tag">100% Pi</span>
+            </div>
+            <div class="store-item">
+                <div>
+                    <strong>Quán Cà Phê Phượt Bụi</strong>
+                    <p style="font-size: 0.78rem; color: var(--text-sub);">Thành phố Buôn Ma Thuột</p>
+                </div>
+                <span class="store-tag">50% Pi</span>
+            </div>
+        </div>
+
+        <!-- Tab 5: Chat -->
+        <div id="tab-chat" class="tab-content">
+            <div class="card">
+                <h3 style="font-size: 1rem; margin-bottom: 8px;"><i class="fa-solid fa-comments"></i> Trò Chuyện Cộng Đồng</h3>
+                <div id="chat-box" style="height: 200px; overflow-y: auto; border: 1px solid var(--border-color); padding: 8px; border-radius: 6px; margin-bottom: 8px; background: #fafafa; font-size: 0.85rem;">
+                    <p style="color: var(--text-sub);"><strong>[Hệ thống]:</strong> Chào mừng anh Nghĩa đến với phòng Chat Phượt Bụi!</p>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                    <input type="text" id="chat-msg" placeholder="Nhập tin nhắn..." style="margin: 0;">
+                    <button class="btn-primary" style="width: 70px;" onclick="sendChatMessage()">Gửi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thanh Menu Điều Hướng Đáy -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('feed', this)">
+            <i class="fa-solid fa-newspaper"></i>
+            <span>Bảng tin</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('map', this)">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <span>Bản đồ</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('post', this)">
+            <i class="fa-solid fa-circle-plus" style="color: var(--primary); font-size: 1.4rem;"></i>
+            <span>Đăng bài</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('stores', this)">
+            <i class="fa-solid fa-store"></i>
+            <span>Cửa hàng</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('chat', this)">
+            <i class="fa-solid fa-comments"></i>
+            <span>Chat</span>
+        </div>
+    </nav>
+
+    <script>
+        let currentUser = null;
+
+        const defaultPosts = [
+            {
+                id: 1,
+                author: "Tuấn Pioneer",
+                location: "Sa Pa, Lào Cai",
+                time: "Vừa đăng",
+                content: "Cung đường phượt Ô Quy Hồ hôm nay mây vờn rất đẹp! Khách sạn ở đây đã nhận thanh toán thử nghiệm Pi cho phượt thủ.",
+                image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500",
+                likes: 152
+            }
+        ];
+
+        // 1. Đồng hồ Việt Nam
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('vi-VN', { hour12: false });
+            const dateStr = now.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+            const clockEl = document.getElementById('live-clock');
+            if (clockEl) clockEl.innerText = `${timeStr} (${dateStr})`;
+        }
+        setInterval(updateClock, 1000);
+
+        // 2. Cập nhật giá Pi an toàn (fallback $38.50 nếu API bị chặn)
+        async function fetchPiPrice() {
+            try {
+                const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pi-network-iou&vs_currencies=usd');
+                const data = await res.json();
+                if (data && data['pi-network-iou']) {
+                    document.getElementById('pi-price-tag').innerText = `$${data['pi-network-iou'].usd.toFixed(2)}`;
+                }
+            } catch(e) {
+                // Giữ giá mặc định mượt mà
+            }
+        }
+
+        // 3. Tìm bản đồ
+        function searchGoogleMap() {
+            const loc = document.getElementById('map-search-input').value;
+            if(!loc) return;
+            document.getElementById('map-frame').src = `https://maps.google.com/maps?q=${encodeURIComponent(loc)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+        }
+
+        // 4. Nạp bài viết
+        function loadPosts() {
+            const savedPosts = JSON.parse(localStorage.getItem('phuotbui_posts') || '[]');
+            const allPosts = [...savedPosts, ...defaultPosts];
+            const container = document.getElementById('posts-feed-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            allPosts.forEach(post => {
+                const imgHtml = post.image ? `<img src="${post.image}" class="post-img" alt="Post img">` : '';
+                container.innerHTML += `
+                    <div class="card">
+                        <div class="post-header">
+                            <div class="avatar">${post.author.charAt(0)}</div>
+                            <div>
+                                <strong>${post.author}</strong>
+                                <p style="font-size: 0.72rem; color: var(--text-sub);">${post.time} • ${post.location}</p>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.9rem;">${post.content}</p>
+                        ${imgHtml}
+                        <div class="post-actions">
+                            <span onclick="likePost(this)"><i class="fa-regular fa-heart"></i> <span class="like-count">${post.likes}</span> Thích</span>
+                            <span onclick="alert('Tính năng bình luận đang mở!')"><i class="fa-regular fa-comment"></i> Bình luận</span>
+                            <span onclick="alert('Đã sao chép liên kết chia sẻ!')"><i class="fa-solid fa-share"></i> Chia sẻ</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // 5. Đăng bài mới
+        function submitPost() {
+            const title = document.getElementById('post-title').value;
+            const location = document.getElementById('post-location').value || "Việt Nam";
+            const content = document.getElementById('post-content').value;
+            const imgUrl = document.getElementById('post-img-url').value;
+
+            if(!title || !content) { 
+                alert("Vui lòng nhập đầy đủ tiêu đề và nội dung bài viết!"); 
+                return; 
+            }
+
+            const newPost = {
+                id: Date.now(),
+                author: currentUser ? currentUser.username : "Pioneer Bụi",
+                location: location,
+                time: "Vừa xong",
+                content: `<strong>${title}</strong><br>${content}`,
+                image: imgUrl || null,
+                likes: 1
+            };
+
+            const savedPosts = JSON.parse(localStorage.getItem('phuotbui_posts') || '[]');
+            savedPosts.unshift(newPost);
+            localStorage.setItem('phuotbui_posts', JSON.stringify(savedPosts));
+
+            alert("Đã đăng bài thành công lên Bảng tin!");
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-location').value = '';
+            document.getElementById('post-content').value = '';
+            document.getElementById('post-img-url').value = '';
+
+            loadPosts();
+            const firstNav = document.querySelectorAll('.nav-item')[0];
+            if (firstNav) switchTab('feed', firstNav);
+        }
+
+        // 6. Chuyển Tab
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) targetTab.classList.add('active');
+            if (element) element.classList.add('active');
+        }
+
+        // 7. Ví Pi SDK
+        async function connectPiWallet() {
+            try {
+                if (typeof Pi !== 'undefined') {
+                    await Pi.init({ version: "2.0", apiKey: "82whbncni0u42en2cirvedpeu5kfwti3cpky1tgltvjctvj1gnukmldkkq2ptrl" });
+                    const auth = await Pi.authenticate(['username'], function(p){});
+                    currentUser = auth.user;
+                    document.getElementById('user-status').innerText = auth.user.username;
+                    alert("Kết nối thành công Pioneer: " + auth.user.username);
+                } else {
+                    document.getElementById('user-status').innerText = "Pioneer Test";
+                }
+            } catch(e) {
+                document.getElementById('user-status').innerText = "Pioneer kết nối";
+            }
+        }
+
+        function donatePiAction() {
+            alert("Địa chỉ ví nhận ủng hộ:\nGAXQ6UVRVI5BX7BMWJ5RV6TNGY3EG4YZETMNPQTEY7KTC5SUFGMCL2PK\n\nCảm ơn anh đã chung tay xây dựng Quỹ Phượt Bụi!");
+        }
+
+        function sendChatMessage() {
+            const msg = document.getElementById('chat-msg').value;
+            if(!msg) return;
+            const chatBox = document.getElementById('chat-box');
+            const author = currentUser ? currentUser.username : "Tôi";
+            chatBox.innerHTML += `<p style="margin-top:4px;"><strong>${author}:</strong> ${msg}</p>`;
+            document.getElementById('chat-msg').value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function likePost(btn) {
+            const countSpan = btn.querySelector('.like-count');
+            countSpan.innerText = parseInt(countSpan.innerText) + 1;
+            btn.style.color = '#dc2626';
+        }
+
+        // Tự khởi chạy
+        window.onload = function() {
+            updateClock();
+            loadPosts();
+            fetchPiPrice();
+            setInterval(fetchPiPrice, 60000);
+        };
+ 
