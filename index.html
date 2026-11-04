@@ -3,6 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHƯỢT BỤI - Du Lịch Bụi Không Biên Giới</title>
+    <!-- Pi Network SDK -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <!-- OpenStreetMap Leaflet CSS & JS (Keyless Map) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #6b21a8;
+            --primary-dark: #4c1d95;
+            --accent: #f59e0b;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #f8fafc;
+            --text-gray: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-light); padding-bottom: 70px; }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .logo-title h1 { font-size: 1.2rem; font-weight: bold; color: var(--accent); }
+        .logo-title p { font-size: 0.75rem; color: var(--text-gray); }
+        .user-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Widgets Bar (Giá Pi & Thời tiết) */
+        .widgets-bar {
+            display: flex;
+            gap: 10px;
+            padding: 10px 15px;
+            background: #111827;
+            border-bottom: 1px solid #1f2937;
+            overflow-x: auto;
+        }
+        .widget-item {
+            background: var(--card-bg);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Main Container */
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Feed Cards */
+        .post-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #334155;
+        }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .post-img { width: 100%; border-radius: 8px; margin: 10px 0; max-height: 250px; object-fit: cover; }
+        .post-actions { display: flex; justify-content: space-between; border-top: 1px solid #334155; pt: 10px; margin-top: 10px; color: var(--text-gray); font-size: 0.9rem; }
+
+        /* Map Container */
+        #map { height: 350px; width: 100%; border-radius: 12px; border: 1px solid #334155; margin-top: 10px; }
+
+        /* Store List */
+        .store-item {
+            background: var(--card-bg);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .store-tag { background: #059669; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #0f172a;
+            border-top: 1px solid #1e293b;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+        .nav-item { color: var(--text-gray); text-align: center; text-decoration: none; font-size: 0.75rem; cursor: pointer; }
+        .nav-item i { font-size: 1.2rem; display: block; margin-bottom: 3px; }
+        .nav-item.active { color: var(--accent); }
+
+        /* Form Inputs */
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: white;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-donate {
+            background: var(--accent);
+            color: black;
+            font-weight: bold;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-title">
+            <h1>PHƯỢT BỤI</h1>
+            <p>Du Lịch Bụi Không Biên Giới</p>
+        </div>
+        <button class="user-btn" id="login-btn" onclick="initPiAuth()">
+            <i class="fa-solid fa-wallet"></i> <span id="user-status">Đăng nhập Pi</span>
+        </button>
+    </header>
+
+    <!-- Widgets Bar -->
+    <div class="widgets-bar">
+        <div class="widget-item">
+            <i class="fa-solid fa-coins" style="color: #f59e0b;"></i>
+            <span>Pi Testnet: <strong>$314.159 (Mẫu)</strong></span>
+        </div>
+        <div class="widget-item">
+            <i class="fa-solid fa-cloud-sun" style="color: #38bdf8;"></i>
+            <span>Đà Nẵng: <strong>28°C Nắng nhẹ</strong></span>
+        </div>
+        <div class="widget-item">
+            <i class="fa-solid fa-clock" style="color: #a855f7;"></i>
+            <span id="live-clock">00:00:00</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Tab 1: Bảng Tin (Feed) -->
+        <div id="tab-feed" class="tab-content active">
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="avatar">PB</div>
+                    <div>
+                        <strong>Tuấn Pioneer</strong>
+                        <p style="font-size: 0.75rem; color: var(--text-gray);">Đã đăng 2 giờ trước • Hà Giang</p>
+                    </div>
+                </div>
+                <p>Mùa hoa tam giác mạch Hà Giang năm nay đẹp ngỡ ngàng! Homestay anh Hùng chấp nhận thanh toán 100% Pi Testnet cho anh em phượt thủ.</p>
+                <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500" class="post-img" alt="Hà Giang">
+                <div class="post-actions">
+                    <span><i class="fa-regular fa-heart"></i> 124 Yêu thích</span>
+                    <span><i class="fa-regular fa-comment"></i> 18 Bình luận</span>
+                    <span><i class="fa-solid fa-share"></i> Chia sẻ</span>
+                </div>
+            </div>
+
+            <!-- Quyên góp ủng hộ quỹ -->
+            <div class="post-card" style="border-color: var(--accent);">
+                <h3><i class="fa-solid fa-hand-holding-heart" style="color: var(--accent);"></i> Quỹ Phượt Bụi Thiện Nguyện</h3>
+                <p style="font-size: 0.85rem; color: var(--text-gray); margin: 5px 0 10px 0;">Quyên góp Pi Testnet hỗ trợ các điểm trường vùng cao.</p>
+                <button class="btn-donate" onclick="donatePi()">Ủng hộ 1 Pi Testnet</button>
+            </div>
+        </div>
+
+        <!-- Tab 2: Bản Đồ (OpenStreetMap Keyless) -->
+        <div id="tab-map" class="tab-content">
+            <h3>Bản Đồ Điểm Đến & Cửa Hàng Pi</h3>
+            <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 10px;">Khám phá các trạm dừng chân chấp nhận Pi trên toàn quốc.</p>
+            <div id="map"></div>
+        </div>
+
+        <!-- Tab 3: Đăng Bài (Post) -->
+        <div id="tab-post" class="tab-content">
+            <h3>Đăng Bài Chia Sẻ Điểm Đến</h3>
+            <br>
+            <input type="text" id="post-title" placeholder="Tiêu đề chuyến đi...">
+            <textarea id="post-content" rows="4" placeholder="Chia sẻ trải nghiệm, kinh nghiệm dịch vụ..."></textarea>
+            <input type="text" id="post-location" placeholder="Địa điểm (ví dụ: Đà Nẵng, Sa Pa...)">
+            <button class="btn-primary" onclick="createPost()">Đăng Bài Ngay</button>
+        </div>
+
+        <!-- Tab 4: Cửa Hàng Pi (Stores) -->
+        <div id="tab-stores" class="tab-content">
+            <h3>Danh Sách Cửa Hàng Thanh Toán Pi</h3>
+            <br>
+            <div class="store-item">
+                <div>
+                    <strong>Phượt Homestay Đà Nẵng</strong>
+                    <p style="font-size: 0.8rem; color: var(--text-gray);">Sơn Trà, Đà Nẵng</p>
+                </div>
+                <span class="store-tag">Đồng ý 100% Pi</span>
+            </div>
+            <div class="store-item">
+                <div>
+                    <strong>Cà Phê Phượt Bụi Tây Nguyên</strong>
+                    <p style="font-size: 0.8rem; color: var(--text-gray);">TP. Buôn Ma Thuột</p>
+                </div>
+                <span class="store-tag">Đồng ý 50% Pi</span>
+            </div>
+        </div>
+
+        <!-- Tab 5: Chat & Cá Nhân -->
+        <div id="tab-profile" class="tab-content">
+            <h3>Cộng Đồng Phượt Bụi Chat</h3>
+            <br>
+            <div class="post-card" id="chat-box" style="height: 250px; overflow-y: auto;">
+                <p><strong>[Hệ thống]:</strong> Chào mừng bạn đến với phòng chat chung Pioneer Phượt Bụi!</p>
+            </div>
+            <div style="display: flex; gap: 5px;">
+                <input type="text" id="chat-msg" placeholder="Nhập tin nhắn..." style="margin: 0;">
+                <button class="btn-primary" style="width: 80px;" onclick="sendChat()">Gửi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('feed', this)">
+            <i class="fa-solid fa-newspaper"></i>
+            Bảng tin
+        </div>
+        <div class="nav-item" onclick="switchTab('map', this)">
+            <i class="fa-solid fa-map-location-dot"></i>
+            Bản đồ
+        </div>
+        <div class="nav-item" onclick="switchTab('post', this)">
+            <i class="fa-solid fa-circle-plus" style="font-size: 1.5rem; color: var(--accent);"></i>
+            Đăng bài
+        </div>
+        <div class="nav-item" onclick="switchTab('stores', this)">
+            <i class="fa-solid fa-store"></i>
+            Cửa hàng
+        </div>
+        <div class="nav-item" onclick="switchTab('profile', this)">
+            <i class="fa-solid fa-comments"></i>
+            Chat
+        </div>
+    </nav>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let currentUser = null;
+        let mapInitialized = false;
+        let map = null;
+
+        // Cập nhật đồng hồ thời gian thực
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toLocaleTimeString('vi-VN');
+        }, 1000);
+
+        // Chuyển Tab
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabName).classList.add('active');
+            element.classList.add('active');
+
+            // Khởi tạo bản đồ nếu chọn tab Map
+            if (tabName === 'map' && !mapInitialized) {
+                setTimeout(initMap, 200);
+                mapInitialized = true;
+            }
+        }
+
+        // Khởi tạo OpenStreetMap không dùng Key
+        function initMap() {
+            map = L.map('map').setView([16.0544, 108.2022], 6); // Trung tâm Việt Nam (Đà Nẵng)
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            // Đánh dấu địa điểm mẫu
+            L.marker([16.0544, 108.2022]).addTo(map).bindPopup('<b>Đà Nẵng</b><br>Trạm dừng chân Phượt Bụi Đà Nẵng.');
+            L.marker([22.3364, 103.8438]).addTo(map).bindPopup('<b>Sa Pa</b><br>Homestay chấp nhận Pi.');
+        }
+
+        // Khởi tạo Pi Network SDK Testnet
+        async function initPiAuth() {
+            try {
+                await Pi.init({ version: "2.0", apiKey: "82whbncni0u42en2cirvedpeu5kfwti3cpky1tgltvjctvj1gnukmldkkq2ptrl" });
+                
+                const auth = await Pi.authenticate(['username', 'payments'], onIncompletePaymentFound);
+                currentUser = auth.user;
+                
+                document.getElementById('user-status').innerText = auth.user.username;
+                alert("Đăng nhập thành công Pioneer: " + auth.user.username);
+            } catch (err) {
+                console.error("Lỗi xác thực Pi SDK:", err);
+                alert("Không thể kết nối Pi SDK. Hãy đảm bảo bạn đang mở trên Pi Browser!");
+            }
+        }
+
+        function onIncompletePaymentFound(payment) {
+            console.log("Phát hiện giao dịch chưa hoàn tất:", payment);
+        }
+
+        // Quyên góp 1 Pi Testnet
+        async function donatePi() {
+            if (!currentUser) {
+                alert("Vui lòng bấm 'Đăng nhập Pi' ở góc trên trước!");
+                return;
+            }
+
+            try {
+                const paymentData = {
+                    amount: 1,
+                    memo: "Ủng hộ Quỹ Phượt Bụi Thiện Nguyện (Testnet)",
+                    metadata: { type: "donation" }
+                };
+
+                const callbacks = {
+                    onReadyForServerApproval: function(paymentId) {
+                        console.log("Chờ phê duyệt Server:", paymentId);
+                    },
+                    onReadyForServerCompletion: function(paymentId, txid) {
+                        console.log("Hoàn tất giao dịch:", paymentId, txid);
+                        alert("Cảm ơn Pioneer " + currentUser.username + " đã ủng hộ 1 Pi Testnet!");
+                    },
+                    onCancel: function(paymentId) {
+                        console.log("Hủy giao dịch:", paymentId);
+                    },
+                    onError: function(error, payment) {
+                        console.error("Lỗi thanh toán:", error);
+                        alert("Giao dịch gặp lỗi, vui lòng thử lại trên Testnet!");
+                    }
+                };
+
+                await Pi.createPayment(paymentData, callbacks);
+            } catch (err) {
+                console.error("Lỗi khởi tạo giao dịch:", err);
+            }
+        }
+
+        // Đăng bài giả lập
+        function createPost() {
+            const title = document.getElementById('post-title').value;
+            if (!title) { alert("Vui lòng nhập tiêu đề!"); return; }
+            alert("Đăng bài thành công! Bài viết của bạn đang chờ hiển thị trên Bảng Tin.");
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-content').value = '';
+        }
+
+        // Chat giả lập
+        function sendChat() {
+            const msg = document.getElementById('chat-msg').value;
+            if(!msg) return;
+            const chatBox = document.getElementById('chat-box');
+            const name = currentUser ? currentUser.username : "Tôi";
+            chatBox.innerHTML += `<p><strong>${name}:</strong> ${msg}</p>`;
+            document.getElementById('chat-msg').value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Tự động kết nối Pi SDK khi nạp trang
+        window.onload = function() {
+            if (window.Pi) {
+                initPiAuth();
+            }
+        };
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://sdk.minepi.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com data:; connect-src 'self' https://socialchain.app https://backend.appstudio-u7cm9zhmha0ruwv8.piappengine.com;">
     <title>Du Lịch Bụi Không Biên Giới - Phượt Thiện Nguyện</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
