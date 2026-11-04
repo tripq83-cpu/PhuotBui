@@ -463,7 +463,6 @@
         function sendChatMessage() {
             const msg = document.getElementById('chat-msg').value;
             if(!msg) return;
-            const chatBox = document.getElementById('chat-box');
                 const chatBox = document.getElementById('chat-box');
             const author = loggedUser ? loggedUser : "Tôi";
             chatBox.innerHTML += `<p style="margin-top:4px;"><strong>${author}:</strong> ${msg}</p>`;
