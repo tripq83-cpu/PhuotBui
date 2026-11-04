@@ -53,7 +53,7 @@
 
         async function initPiAuth() {
             try {
-                await Pi.init({ version: "2.0" });
+                await Pi.init({ version: "2.0" });,apiKey:"82whbncni0u42en2cirvedpeu5kfwti3cpky1tgltvjctvj1gnukmldkkq2ptrlx" });
                 
                 function onIncompletePaymentFound(payment) {
                     console.log("Found incomplete payment:", payment);
