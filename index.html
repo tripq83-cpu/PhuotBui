@@ -10,44 +10,55 @@
     <style>
         :root { --primary: #6b21a8; --accent: #f59e0b; --bg-body: #f8fafc; --card-bg: #ffffff; --text-main: #0f172a; --text-sub: #64748b; --border-color: #e2e8f0; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-main); padding-bottom: 80px; }
-        header { background: linear-gradient(135deg, #581c87, var(--primary)); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .logo-title h1 { font-size: 1.2rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .logo-title p { font-size: 0.72rem; color: #e9d5ff; }
-        .user-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-        .widgets-bar { display: flex; gap: 8px; padding: 10px 12px; background: #ffffff; border-bottom: 1px solid var(--border-color); overflow-x: auto; }
-        .widget-item { background: #f1f5f9; padding: 6px 10px; border-radius: 20px; font-size: 0.75rem; white-space: nowrap; display: flex; align-items: center; gap: 5px; color: var(--text-main); border: 1px solid #e2e8f0; }
-        .container { padding: 12px; max-width: 600px; margin: 0 auto; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-bottom: 70px; }
+        
+        header { background: linear-gradient(135deg, #581c87, var(--primary)); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .logo-title h1 { font-size: 1.1rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px; }
+        .logo-title p { font-size: 0.7rem; color: #e9d5ff; }
+        .user-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 5px 10px; border-radius: 16px; font-size: 0.75rem; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        
+        .widgets-bar { display: flex; gap: 6px; padding: 8px 10px; background: #ffffff; border-bottom: 1px solid var(--border-color); overflow-x: auto; }
+        .widget-item { background: #f1f5f9; padding: 4px 8px; border-radius: 14px; font-size: 0.7rem; white-space: nowrap; display: flex; align-items: center; gap: 4px; border: 1px solid #e2e8f0; }
+        
+        .container { padding: 10px; max-width: 600px; margin: 0 auto; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .card { background: var(--card-bg); border-radius: 12px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem; }
-        .post-img { width: 100%; border-radius: 8px; margin: 8px 0; max-height: 220px; object-fit: cover; }
-        .post-actions { display: flex; justify-content: space-around; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 8px 0; margin: 8px 0; color: var(--text-sub); font-size: 0.82rem; cursor: pointer; }
-        .comments-section { margin-top: 8px; font-size: 0.85rem; }
-        .comment-list { max-height: 120px; overflow-y: auto; margin-bottom: 6px; background: #f8fafc; padding: 6px; border-radius: 6px; }
-        .comment-item { font-size: 0.8rem; margin-bottom: 4px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 2px; }
+        .card { background: var(--card-bg); border-radius: 10px; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border-color); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+        
+        .post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; }
+        .post-img { width: 100%; border-radius: 6px; margin: 6px 0; max-height: 200px; object-fit: cover; }
+        .post-actions { display: flex; justify-content: space-around; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 6px 0; margin: 6px 0; color: var(--text-sub); font-size: 0.78rem; cursor: pointer; }
+        
+        .comments-section { margin-top: 6px; }
+        .comment-list { max-height: 100px; overflow-y: auto; margin-bottom: 6px; background: #f8fafc; padding: 6px; border-radius: 6px; }
+        .comment-item { font-size: 0.75rem; margin-bottom: 3px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 2px; }
         .comment-box-input { display: flex; gap: 4px; }
-        .comment-box-input input { margin: 0; padding: 6px; font-size: 0.8rem; }
-        .comment-box-input button { width: 60px; padding: 6px; font-size: 0.8rem; }
-        .map-wrapper { position: relative; width: 100%; height: 320px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); }
+        .comment-box-input input { margin: 0; padding: 6px; font-size: 0.78rem; }
+        .comment-box-input button { width: 50px; padding: 6px; font-size: 0.78rem; }
+        
+        .map-wrapper { position: relative; width: 100%; height: 300px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); }
         #map-frame { width: 100%; height: 100%; border: none; }
-        .map-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.9rem; pointer-events: none; transition: opacity 0.3s; }
-        .map-wrapper.active .map-overlay { opacity: 0; pointer-events: none; }
-        .store-item { background: var(--card-bg); padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
-        .store-tag { background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 2px solid var(--border-color); display: flex; justify-content: space-around; padding: 10px 0; z-index: 9999; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
-        .nav-item { color: var(--text-sub); text-align: center; text-decoration: none; font-size: 0.7rem; cursor: pointer; flex: 1; }
-        .nav-item i { font-size: 1.15rem; display: block; margin-bottom: 2px; }
+        .gps-btn { background: #059669; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; }
+
+        .store-item { background: var(--card-bg); padding: 10px; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
+        .store-tag { background: #dcfce7; color: #15803d; padding: 3px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 6px 0; z-index: 9999; box-shadow: 0 -2px 6px rgba(0,0,0,0.06); }
+        .nav-item { color: var(--text-sub); text-align: center; text-decoration: none; font-size: 0.65rem; cursor: pointer; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .nav-item i { font-size: 1rem; margin-bottom: 2px; display: block; }
+        .nav-item span { line-height: 1; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
-        input, textarea, select { width: 100%; padding: 10px; background: #fff; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; margin-bottom: 8px; font-size: 0.9rem; }
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
-        .btn-secondary { background: #e2e8f0; color: #334155; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; font-size: 0.9rem; margin-top: 6px; }
-        .btn-donate { background: #fef3c7; color: #92400e; font-weight: bold; border: 1px solid #fde68a; padding: 10px; border-radius: 8px; width: 100%; margin-top: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        
+        .badge { position: absolute; top: 0px; right: 22%; background: #ef4444; color: white; font-size: 0.6rem; font-weight: bold; padding: 1px 4px; border-radius: 10px; min-width: 15px; text-align: center; }
+
+        input, textarea, select { width: 100%; padding: 8px; background: #fff; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; margin-bottom: 6px; font-size: 0.85rem; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 8px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+        .btn-secondary { background: #e2e8f0; color: #334155; border: none; padding: 8px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; font-size: 0.85rem; margin-top: 4px; }
+        
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; padding: 15px; }
         .modal.active { display: flex; }
-        .modal-card { background: white; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        .modal-card { background: white; padding: 16px; border-radius: 10px; width: 100%; max-width: 380px; }
     </style>
 </head>
 <body>
@@ -57,7 +68,7 @@
             <p>Du Lịch Bụi Không Biên Giới</p>
         </div>
         <button class="user-btn" onclick="openLoginModal()">
-            <i class="fa-solid fa-user-check"></i> <span id="user-display-name">Đăng nhập</span>
+            <i class="fa-solid fa-user-check"></i> <span id="user-display-name">bao211221</span>
         </button>
     </header>
 
@@ -66,30 +77,25 @@
         <div class="widget-item"><i class="fa-solid fa-chart-line" style="color: #059669;"></i><span>Giá Pi: <strong id="pi-price-tag" style="color: #059669;">$38.50</strong></span></div>
         <div class="widget-item"><i class="fa-solid fa-sun" style="color: #eab308;"></i><span>Đà Nẵng: <strong>29°C</strong></span></div>
     </div>
-
     <div class="container">
         <div id="tab-feed" class="tab-content active">
-            <div class="card" style="background: #f3e8ff; border-color: #d8b4fe;">
-                <p style="font-size: 0.8rem; color: #6b21a8;"><strong>Ví nhận tài trợ Quỹ:</strong><br><code style="font-size: 0.7rem; word-break: break-all;">GAXQ6UVRVI5BX7BMWJ5RV6TNGY3EG4YZETMNPQTEY7KTC5SUFGMCL2PK</code></p>
-                <button class="btn-donate" onclick="alert('Đã ghi nhận địa chỉ ví tài trợ!')"><i class="fa-solid fa-heart" style="color: #dc2626;"></i> Ủng hộ Quỹ Phượt Bụi</button>
-            </div>
             <div id="posts-feed-container"></div>
         </div>
 
         <div id="tab-map" class="tab-content">
             <div class="card">
-                <h3 style="font-size: 1rem; margin-bottom: 6px;"><i class="fa-solid fa-map-marked-alt"></i> Bản Đồ & Chỉ Đường</h3>
-                <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                <h3 style="font-size: 0.95rem; margin-bottom: 6px;"><i class="fa-solid fa-map-marked-alt"></i> Bản Đồ & Định Vị Phượt</h3>
+                <button class="gps-btn" onclick="getCurrentLocation()"><i class="fa-solid fa-crosshairs"></i> Định vị vị trí thực của tôi</button>
+                <div style="display: flex; gap: 4px; margin-bottom: 6px;">
                     <input type="text" id="map-from" placeholder="Điểm đi..." style="margin:0;">
                     <input type="text" id="map-to" placeholder="Điểm đến..." style="margin:0;">
-                    <button class="btn-primary" style="width: 70px;" onclick="getDirections()">Đi</button>
+                    <button class="btn-primary" style="width: 60px;" onclick="getDirections()">Đi</button>
                 </div>
-                <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                <div style="display: flex; gap: 4px; margin-bottom: 6px;">
                     <input type="text" id="map-search-input" placeholder="Tìm địa điểm..." style="margin: 0;">
-                    <button class="btn-primary" style="width: 70px;" onclick="searchGoogleMap()">Tìm</button>
+                    <button class="btn-primary" style="width: 60px;" onclick="searchGoogleMap()">Tìm</button>
                 </div>
-                <div class="map-wrapper" id="map-wrapper" onclick="enableMapTouch()">
-                    <div class="map-overlay" id="map-overlay">Chạm để tương tác (1 ngón tay)</div>
+                <div class="map-wrapper">
                     <iframe id="map-frame" src="https://maps.google.com/maps?q=Đà%20Nẵng&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
                 </div>
             </div>
@@ -97,18 +103,29 @@
 
         <div id="tab-schedule" class="tab-content">
             <div class="card">
-                <h3 style="font-size: 1rem; margin-bottom: 10px;"><i class="fa-solid fa-calendar-days"></i> Lên Lịch Trình</h3>
+                <h3 style="font-size: 0.95rem; margin-bottom: 8px;"><i class="fa-solid fa-calendar-days"></i> Lên Lịch Trình</h3>
                 <input type="text" id="trip-title" placeholder="Tên chuyến đi...">
                 <input type="date" id="trip-date">
-                <textarea id="trip-notes" rows="2" placeholder="Ghi chú..."></textarea>
+                <textarea id="trip-notes" rows="2" placeholder="Ghi chú chi tiết..."></textarea>
                 <button class="btn-primary" onclick="addTripSchedule()">Thêm Lịch Trình</button>
             </div>
             <div id="trip-list-container"></div>
         </div>
 
+        <div id="tab-fund" class="tab-content">
+            <div class="card" style="background: #f3e8ff; border-color: #d8b4fe; text-align: center;">
+                <h3 style="color: var(--primary); font-size: 1rem; margin-bottom: 6px;"><i class="fa-solid fa-hand-holding-dollar"></i> Ủng Hộ Quỹ Phượt Bụi</h3>
+                <p style="font-size: 0.8rem; color: #6b21a8; margin-bottom: 8px;">Cùng chung tay phát triển cộng đồng du lịch bụi Pi Network toàn cầu.</p>
+                <p style="font-size: 0.75rem; background: #fff; padding: 6px; border-radius: 6px; word-break: break-all; border: 1px solid #d8b4fe;">
+                    <strong>Địa chỉ ví Quỹ:</strong><br><code>GAXQ6UVRVI5BX7BMWJ5RV6TNGY3EG4YZETMNPQTEY7KTC5SUFGMCL2PK</code>
+                </p>
+                <button class="btn-primary" style="margin-top: 10px; background: #9333ea;" onclick="alert('Đã sao chép địa chỉ ví Quỹ!')"><i class="fa-solid fa-copy"></i> Sao Chép Địa Chỉ Ví</button>
+            </div>
+        </div>
+
         <div id="tab-post" class="tab-content">
             <div class="card">
-                <h3 style="font-size: 1rem; margin-bottom: 10px;"><i class="fa-solid fa-pen-to-square"></i> Đăng Bài Mới</h3>
+                <h3 style="font-size: 0.95rem; margin-bottom: 8px;"><i class="fa-solid fa-pen-to-square"></i> Đăng Bài Mới</h3>
                 <input type="text" id="post-title" placeholder="Tiêu đề...">
                 <input type="text" id="post-location" placeholder="Địa điểm...">
                 <textarea id="post-content" rows="3" placeholder="Nội dung trải nghiệm..."></textarea>
@@ -117,20 +134,20 @@
         </div>
 
         <div id="tab-stores" class="tab-content">
-            <h3 style="font-size: 1rem; margin-bottom: 8px;">Cửa Hàng Chấp Nhận Pi</h3>
-            <div class="store-item"><div><strong>Phượt Homestay Đà Nẵng</strong><p style="font-size:0.75rem; color:var(--text-sub);">Sơn Trà, Đà Nẵng</p></div><span class="store-tag">100% Pi</span></div>
-            <div class="store-item"><div><strong>Cà Phê Phượt Bụi</strong><p style="font-size:0.75rem; color:var(--text-sub);">Buôn Ma Thuột</p></div><span class="store-tag">50% Pi</span></div>
+            <h3 style="font-size: 0.95rem; margin-bottom: 6px;">Cửa Hàng Chấp Nhận Pi</h3>
+            <div class="store-item"><div><strong>Phượt Homestay Đà Nẵng</strong><p style="font-size:0.7rem; color:var(--text-sub);">Sơn Trà, Đà Nẵng</p></div><span class="store-tag">100% Pi</span></div>
+            <div class="store-item"><div><strong>Cà Phê Phượt Bụi</strong><p style="font-size:0.7rem; color:var(--text-sub);">Buôn Ma Thuột</p></div><span class="store-tag">50% Pi</span></div>
         </div>
 
         <div id="tab-chat" class="tab-content">
             <div class="card">
-                <h3 style="font-size: 1rem; margin-bottom: 8px;"><i class="fa-solid fa-comments"></i> Trò Chuyện Cộng Đồng</h3>
-                <div id="chat-box" style="height: 180px; overflow-y: auto; border: 1px solid var(--border-color); padding: 8px; border-radius: 6px; margin-bottom: 8px; background: #fafafa; font-size: 0.85rem;">
-                    <p style="color: var(--text-sub);"><strong>[Hệ thống]:</strong> Chào mừng đến phòng Chat!</p>
+                <h3 style="font-size: 0.95rem; margin-bottom: 6px;"><i class="fa-solid fa-comments"></i> Trò Chuyện Cộng Đồng</h3>
+                <div id="chat-box" style="height: 180px; overflow-y: auto; border: 1px solid var(--border-color); padding: 6px; border-radius: 6px; margin-bottom: 6px; background: #fafafa; font-size: 0.8rem;">
+                    <p style="color: var(--text-sub);"><strong>[Hệ thống]:</strong> Chào mừng đến phòng Chat Phượt Bụi!</p>
                 </div>
-                <div style="display: flex; gap: 6px;">
+                <div style="display: flex; gap: 4px;">
                     <input type="text" id="chat-msg" placeholder="Nhập tin nhắn..." style="margin: 0;">
-                    <button class="btn-primary" style="width: 70px;" onclick="sendChatMessage()">Gửi</button>
+                    <button class="btn-primary" style="width: 60px;" onclick="sendChatMessage()">Gửi</button>
                 </div>
             </div>
         </div>
@@ -138,7 +155,7 @@
 
     <div class="modal" id="login-modal">
         <div class="modal-card">
-            <h3 style="margin-bottom: 12px; font-size: 1.1rem; color: var(--primary);">Đăng Nhập Thành Viên</h3>
+            <h3 style="margin-bottom: 10px; font-size: 1rem; color: var(--primary);">Đăng Nhập Thành Viên</h3>
             <input type="text" id="auth-username" placeholder="Tên đăng nhập...">
             <input type="password" id="auth-password" placeholder="Mật khẩu...">
             <button class="btn-primary" onclick="loginWithAccount()">Đăng Nhập</button>
@@ -148,15 +165,16 @@
     </div>
 
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('feed', this)"><i class="fa-solid fa-newspaper"><span>Bảng tin</span></i></div>
-        <div class="nav-item" onclick="switchTab('map', this)"><i class="fa-solid fa-map-location-dot"><span>Bản đồ</span></i></div>
-        <div class="nav-item" onclick="switchTab('schedule', this)"><i class="fa-solid fa-calendar-days"><span>Lịch trình</span></i></div>
-        <div class="nav-item" onclick="switchTab('post', this)"><i class="fa-solid fa-circle-plus" style="color: var(--primary); font-size: 1.3rem;"><span>Đăng bài</span></i></div>
-        <div class="nav-item" onclick="switchTab('stores', this)"><i class="fa-solid fa-store"><span>Cửa hàng</span></i></div>
-        <div class="nav-item" onclick="switchTab('chat', this)"><i class="fa-solid fa-comments"><span>Chat</span></i></div>
+        <div class="nav-item active" onclick="switchTab('feed', this)"><i class="fa-solid fa-newspaper"></i><span>Tin tức</span><span class="badge" id="badge-feed">3</span></div>
+        <div class="nav-item" onclick="switchTab('map', this)"><i class="fa-solid fa-map-location-dot"></i><span>Bản đồ</span></div>
+        <div class="nav-item" onclick="switchTab('schedule', this)"><i class="fa-solid fa-calendar-days"></i><span>Lịch trình</span></div>
+        <div class="nav-item" onclick="switchTab('fund', this)"><i class="fa-solid fa-heart" style="color: #e11d48;"></i><span>Quỹ Pi</span></div>
+        <div class="nav-item" onclick="switchTab('post', this)"><i class="fa-solid fa-circle-plus" style="color: var(--primary);"></i><span>Đăng bài</span></div>
+        <div class="nav-item" onclick="switchTab('stores', this)"><i class="fa-solid fa-store"></i><span>Cửa hàng</span></div>
+        <div class="nav-item" onclick="switchTab('chat', this)"><i class="fa-solid fa-comments"></i><span>Chat</span><span class="badge" id="badge-chat">5</span></div>
     </nav>
         <script>
-        let loggedUser = null;
+        let loggedUser = "bao211221";
         let defaultPosts = [{
             author: "Tuấn Pioneer", location: "Sa Pa", time: "Vừa đăng",
             content: "Cung đường Ô Quy Hồ hôm nay mây vờn rất đẹp! Đã thanh toán Pi thử nghiệm.",
@@ -187,8 +205,9 @@
             const target = document.getElementById('tab-' + id);
             if(target) target.classList.add('active');
             if(el) {
-                const nav = el.closest('.nav-item');
-                if(nav) nav.classList.add('active');
+                el.classList.add('active');
+                const badge = el.querySelector('.badge');
+                if(badge) badge.style.display = 'none';
             }
         }
 
@@ -208,9 +227,9 @@
                     <div class="card">
                         <div class="post-header">
                             <div class="avatar">${p.author.charAt(0).toUpperCase()}</div>
-                            <div><strong>${p.author}</strong><p style="font-size:0.7rem; color:var(--text-sub);">${p.time} • ${p.location}</p></div>
+                            <div><strong>${p.author}</strong><p style="font-size:0.68rem; color:var(--text-sub);">${p.time} • ${p.location}</p></div>
                         </div>
-                        <p style="font-size:0.9rem;">${p.content}</p>${img}
+                        <p style="font-size:0.85rem;">${p.content}</p>${img}
                         <div class="post-actions">
                             <span onclick="likePost(${idx})"><i class="fa-regular fa-heart"></i> ${p.likes} Thích</span>
                             <span><i class="fa-regular fa-comment"></i> ${p.comments ? p.comments.length : 0} Bình luận</span>
@@ -237,7 +256,7 @@
             localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
             alert("Đăng bài thành công!");
             document.getElementById('post-title').value = ''; document.getElementById('post-location').value = ''; document.getElementById('post-content').value = '';
-            loadPosts(); switchTab('feed', null);
+            loadPosts(); switchTab('feed', document.querySelector('.nav-item'));
         }
 
         function likePost(idx) {
@@ -257,7 +276,19 @@
             loadPosts();
         }
 
-        function enableMapTouch() { document.getElementById('map-wrapper').classList.add('active'); }
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    document.getElementById('map-frame').src = `https://maps.google.com/maps?q=${lat},${lng}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+                    alert("Đã định vị thành công vị trí thực của bạn!");
+                }, () => {
+                    alert("Không thể lấy vị trí. Vui lòng cho phép ứng dụng truy cập GPS.");
+                });
+            } else { alert("Trình duyệt không hỗ trợ GPS."); }
+        }
+
         function searchGoogleMap() {
             const q = document.getElementById('map-search-input').value;
             if(q) document.getElementById('map-frame').src = `https://maps.google.com/maps?q=${encodeURIComponent(q)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
@@ -271,14 +302,11 @@
         function addTripSchedule() {
             const t = document.getElementById('trip-title').value, d = document.getElementById('trip-date').value, n = document.getElementById('trip-notes').value;
             if(!t || !d) { alert("Nhập tên và ngày khởi hành!"); return; }
-            document.getElementById('trip-list-container').innerHTML = `<div class="card" style="border-left:4px solid var(--primary);"><strong>${t}</strong><p style="font-size:0.8rem; color:var(--primary);">Khởi hành: ${d}</p><p style="font-size:0.85rem;">${n || "Không có ghi chú."}</p></div>` + document.getElementById('trip-list-container').innerHTML;
+            document.getElementById('trip-list-container').innerHTML = `<div class="card" style="border-left:4px solid var(--primary);"><strong>${t}</strong><p style="font-size:0.75rem; color:var(--primary);">Khởi hành: ${d}</p><p style="font-size:0.8rem;">${n || "Không có ghi chú."}</p></div>` + document.getElementById('trip-list-container').innerHTML;
             alert("Đã thêm lịch trình!");
         }
 
-        function openLoginModal() {
-            if(loggedUser) { if(confirm(`Đăng xuất ${loggedUser}?`)) { loggedUser = null; document.getElementById('user-display-name').innerText = "Đăng nhập"; } }
-            else document.getElementById('login-modal').classList.add('active');
-        }
+        function openLoginModal() { document.getElementById('login-modal').classList.add('active'); }
         function closeLoginModal() { document.getElementById('login-modal').classList.remove('active'); }
         function loginWithAccount() {
             const u = document.getElementById('auth-username').value;
@@ -291,8 +319,8 @@
                     await Pi.init({ version: "2.0", apiKey: "82whbncni0u42en2cirvedpeu5kfwti3cpky1tgltvjctvj1gnukmldkkq2ptrl" });
                     const auth = await Pi.authenticate(['username'], function(){});
                     loggedUser = auth.user.username; document.getElementById('user-display-name').innerText = loggedUser; closeLoginModal();
-                } else { loggedUser = "Pioneer Test"; document.getElementById('user-display-name').innerText = loggedUser; closeLoginModal(); alert("Đăng nhập Pi giả lập thành công!"); }
-            } catch(e) { loggedUser = "Pioneer"; document.getElementById('user-display-name').innerText = loggedUser; closeLoginModal(); }
+                } else { loggedUser = "bao211221"; document.getElementById('user-display-name').innerText = loggedUser; closeLoginModal(); }
+            } catch(e) { loggedUser = "bao211221"; document.getElementById('user-display-name').innerText = loggedUser; closeLoginModal(); }
         }
 
         function sendChatMessage() {
