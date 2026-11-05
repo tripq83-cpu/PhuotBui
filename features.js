@@ -159,6 +159,21 @@ function submitPost() {
     alert("Đăng bài thành công! Đã chuyển về bảng tin.");
 }
 
+    
+    localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
+    if(typeof logAction === 'function') logAction(`Đã đăng bài viết mới: "${title}"`);
+    
+    if(titleEl) titleEl.value = ''; 
+    if(locEl) locEl.value = ''; 
+    if(contentEl) contentEl.value = '';
+    selectedPostMedia = []; 
+    renderPostMediaPreview();
+    
+    loadPosts();
+    switchTab('feed');
+    alert("Đăng bài thành công! Đã chuyển về bảng tin.");
+}
+
 function deletePost(idx) {
     let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
     let target = posts[idx];
