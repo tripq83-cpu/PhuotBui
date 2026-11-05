@@ -91,8 +91,7 @@
                 <p style="font-size: 0.85rem; margin-top: 10px; font-weight: bold; color: var(--primary);" id="finance-summary">Tổng quỹ hiện tại: 0 Pi</p>
             </div>
         </div>
-
-        <!-- Tab 5: Quỹ Pi -->
+                <!-- Tab 5: Quỹ Pi -->
         <div id="tab-fund" class="tab-content">
             <div class="card" style="background: #f3e8ff; border-color: #d8b4fe; text-align: center;">
                 <h3 style="color: var(--primary); font-size: 1rem; margin-bottom: 6px;"><i class="fa-solid fa-hand-holding-dollar"></i> Ủng Hộ Quỹ Phượt Bụi</h3>
@@ -185,5 +184,25 @@
         <div class="modal-card" style="text-align: center;">
             <h3 style="margin-bottom: 10px; font-size: 1rem; color: var(--primary);">Tài Khoản Thành Viên</h3>
             <p id="modal-current-user" style="font-size: 0.85rem; margin-bottom: 12px; font-weight: bold;">Đang tải...</p>
-            <button class="btn-primary" style="background: #ef4444; margin-bottom: 6px;" onclick="logoutPiUser()">Đăng Xuất (Logout
-                
+            <button class="btn-primary" style="background: #ef4444; margin-bottom: 6px;" onclick="logoutPiUser()">Đăng Xuất (Logout)</button>
+            <button class="btn-secondary" onclick="closeModal('login-modal')">Đóng</button>
+        </div>
+    </div>
+
+    <!-- Menu Điều Hướng -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('feed', this)"><i class="fa-solid fa-newspaper"></i><span>Tin tức</span><span class="badge" id="badge-feed">2</span></div>
+        <div class="nav-item" onclick="switchTab('schedule', this)"><i class="fa-solid fa-calendar-days"></i><span>Lịch trình</span></div>
+        <div class="nav-item" onclick="switchTab('groups', this)"><i class="fa-solid fa-users"></i><span>Nhóm</span></div>
+        <div class="nav-item" onclick="switchTab('finance', this)"><i class="fa-solid fa-file-excel" style="color: #16a34a;"></i><span>Thu chi Pi</span></div>
+        <div class="nav-item" onclick="switchTab('fund', this)"><i class="fa-solid fa-heart" style="color: #e11d48;"></i><span>Quỹ Pi</span></div>
+        <div class="nav-item" onclick="switchTab('post', this)"><i class="fa-solid fa-circle-plus" style="color: var(--primary);"></i><span>Đăng</span></div>
+        <div class="nav-item" onclick="switchTab('chat', this)"><i class="fa-solid fa-comments"></i><span>Chat</span><span class="badge" id="badge-chat">1</span></div>
+    </nav>
+
+    <!-- Các file Script liên kết -->
+    <script src="core.js"></script>
+    <script src="features.js"></script>
+    <script src="blockchain.js"></script>
+</body>
+</html>
