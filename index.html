@@ -1,1 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHƯỢT BỤI - Du Lịch Bụi Không Biên Giới</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="background:#f8fafc; font-family:sans-serif; margin:0; padding:10px; padding-bottom:70px;">
 
+    <!-- HEADER BAN ĐẦU -->
+    <header style="margin-bottom:15px;">
+        <h1 style="margin:0; font-size:1.6rem; font-weight:bold;"><i class="fa-solid fa-compass"></i> PHƯỢT BỤI</h1>
+        <p style="margin:2px 0 10px 0; font-size:0.9rem; color:#334155;">Du Lịch Bụi Không Biên Giới</p>
+        
+        <div style="display:flex; flex-direction:column; gap:4px; font-size:0.85rem;">
+            <div style="color:#10b981; font-weight:bold;">🟢 <span id="online-count">18</span> online</div>
+            <div>👤 <span style="border:1px solid #ccc; padding:2px 6px; border-radius:4px; background:#fff;" id="current-user">bao211221</span></div>
+            <div>⏰ <span id="live-clock">00:00:00</span></div>
+            <div style="color:#0d9488; font-weight:bold;">📈 Giá Pi: <span style="color:#059669;">$0.0761</span> (8s)</div>
+        </div>
+    </header>
+
+    <hr style="border:0; border-top:1px solid #e2e8f0; margin:10px 0;">
+
+    <!-- KHU VỰC ĐĂNG BÀI -->
+    <div style="background:white; padding:10px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:15px;">
+        <h3 style="margin-top:0; font-size:0.95rem; color:#334155;"><i class="fa-solid fa-pen-to-square"></i> Đăng bài mới</h3>
+        <input type="text" id="post-title" placeholder="Tiêu đề bài viết..." style="width:100%; padding:6px; margin-bottom:6px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;">
+        <input type="text" id="post-location" placeholder="Địa điểm (Ví dụ: Nóc Ông.. Trà My)..." style="width:100%; padding:6px; margin-bottom:6px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;">
+        <textarea id="post-content" placeholder="Nội dung chia sẻ..." style="width:100%; padding:6px; margin-bottom:6px; border:1px solid #ccc; border-radius:4px; height:60px; box-sizing:border-box;"></textarea>
+        <button onclick="submitPost()" style="background:#6366f1; color:white; border:none; padding:8px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">Đăng bài</button>
+    </div>
+
+    <!-- DANH SÁCH BÀI ĐĂNG BAN ĐẦU -->
+    <div id="posts-feed-container"></div>
+
+    <!-- SCRIPT LIÊN KẾT -->
+    <script src="features.js"></script>
+</body>
+</html>
