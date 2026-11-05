@@ -32,7 +32,7 @@
         .post-header-left { display: flex; align-items: center; gap: 8px; }
         .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; }
         .post-media-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 4px; margin: 6px 0; }
-        .post-img, .post-video { width: 100%; border-radius: 6px; max-height: 180px; object-fit: cover; }
+        .post-img, .post-video { width: 100%; border-radius: 6px; max-height: 180px; object-fit: cover; background: #000; }
         .post-actions { display: flex; justify-content: space-around; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 6px 0; margin: 6px 0; color: var(--text-sub); font-size: 0.78rem; cursor: pointer; }
         
         .comments-section { margin-top: 6px; }
@@ -279,21 +279,16 @@
             videos: [], likes: 152, comments: ["Cảnh đẹp quá anh ơi!"]
         }];
 
-        // Tự động kết nối Pi SDK khi mở app & nhận diện tài khoản mới
         async function initPiAuth() {
             try {
                 if (typeof Pi !== 'undefined') {
                     await Pi.init({ version: "2.0", apiKey: "82whbncni0u42en2cirvedpeu5kfwti3cpky1tgltvjctvj1gnukmldkkq2ptrl" });
-                    const auth = await Pi.authenticate(['username'], function(error) {
-                        console.error(error);
-                    });
+                    const auth = await Pi.authenticate(['username'], function(error) { console.error(error); });
                     if (auth && auth.user && auth.user.username) {
                         loggedUser = auth.user.username;
                     }
                 }
-            } catch(e) {
-                console.log("Chạy chế độ giả lập cục bộ");
-            }
+            } catch(e) { console.log("Chế độ giả lập cục bộ"); }
             if (!loggedUser || loggedUser === "Khách Pi") {
                 loggedUser = localStorage.getItem('phuotbui_logged_user') || "bao211221";
             }
@@ -303,7 +298,6 @@
             loadPosts();
         }
 
-        // Cơ chế Đăng xuất (Logout) sạch sẽ
         function logoutPiUser() {
             localStorage.removeItem('phuotbui_logged_user');
             loggedUser = "Khách Pi";
@@ -330,7 +324,6 @@
             else adminBtn.style.display = "none";
         }
 
-        // Sửa lỗi nút Sao chép địa chỉ ví mượt mà 100%
         function copyWalletAddress() {
             const inputEl = document.getElementById('wallet-address-input');
             inputEl.select();
@@ -413,7 +406,7 @@
             reader.readAsDataURL(file);
         }
 
-        // Đảm bảo lưu bài đăng chuẩn xác vào localStorage
+        // Khắc phục triệt để hiển thị & lưu trữ bài đăng vĩnh viễn
         function loadPosts() {
             let posts = JSON.parse(localStorage.getItem('phuotbui_posts'));
             if (!posts) { posts = defaultPosts; localStorage.setItem('phuotbui_posts', JSON.stringify(posts)); }
@@ -428,7 +421,7 @@
                 
                 let mediaHtml = '<div class="post-media-grid">';
                 if(p.images) p.images.forEach(img => { mediaHtml += `<img src="${img}" class="post-img">`; });
-                if(p.videos) p.videos.forEach(vid => { mediaHtml += `<video src="${vid}" controls class="post-video"></video>`; });
+                if(p.videos) p.videos.forEach(vid => { mediaHtml += `<video src="${vid}" controls playsinline webkit-playsinline class="post-video"></video>`; });
                 mediaHtml += '</div>';
 
                 let deleteBtn = (p.author === loggedUser || loggedUser === "bao211221") 
@@ -576,7 +569,6 @@
             modal.classList.add('active');
         }
 
-        // Bấm vào tên thành viên để nhắn tin riêng hoặc thêm vào nhóm
         function directChatWith(user) {
             closeModal('online-users-modal');
             switchTab('chat', document.querySelectorAll('.nav-item')[6]);
@@ -585,6 +577,33 @@
                 select.innerHTML += `<option value="${user}">Nhắn riêng: ${user}</option>`;
             }
             select.value = user;
+        }
+
+        // Bấm Thêm thành viên hiển thị danh sách online chọn trực quan
+        function addMemberToGroup(gIndex) {
+            let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [];
+            let targetGroup = groups[gIndex];
+            
+            let optionsStr = onlineUsers.map((u, i) => `${i+1}. ${u}`).join("\n");
+            let choice = prompt(`Chọn thành viên online muốn thêm vào nhóm "${targetGroup.name}" (Nhập số) hoặc nhập trực tiếp tên/mã mời:\n${optionsStr}`);
+            if(!choice) return;
+
+            let addName = choice;
+            let numIdx = parseInt(choice) - 1;
+            if(!isNaN(numIdx) && onlineUsers[numIdx]) {
+                addName = onlineUsers[numIdx];
+            }
+
+            if(!targetGroup.members) targetGroup.members = [];
+            if(!targetGroup.members.includes(addName)) {
+                targetGroup.members.push(addName);
+                localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
+                logAction(`Đã thêm thành viên "${addName}" vào nhóm ${targetGroup.name}`);
+                loadGroups();
+                alert(`Đã kết nạp ${addName} vào nhóm thành công!`);
+            } else {
+                alert("Thành viên này đã có trong nhóm rồi!");
+            }
         }
 
         function inviteToGroup(user) {
@@ -621,23 +640,6 @@
             loadGroups();
         }
 
-        function addMemberToGroup(gIndex) {
-            const inputVal = prompt("Nhập tên thành viên HOẶC Mã mời để thêm vào nhóm:");
-            if(!inputVal) return;
-            let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [];
-            if(!groups[gIndex].members) groups[gIndex].members = [];
-            if(!groups[gIndex].members.includes(inputVal)) {
-                groups[gIndex].members.push(inputVal);
-                localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
-                logAction(`Đã thêm thành viên/mã mời "${inputVal}" vào nhóm ${groups[gIndex].name}`);
-                loadGroups();
-                alert(`Đã kết nạp ${inputVal} vào nhóm thành công!`);
-            } else {
-                alert("Thành viên/mã này đã có trong nhóm!");
-            }
-        }
-
-        // Chỉ Trưởng nhóm hoặc chủ sở hữu mới có quyền Xóa nhóm
         function deleteGroup(gIndex) {
             let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [];
             let targetGroup = groups[gIndex];
@@ -669,7 +671,6 @@
                     memsHtml = g.leader;
                 }
 
-                // Kiểm tra quyền hiển thị nút Xóa nhóm (Chỉ Trưởng nhóm hoặc bao211221)
                 let deleteGroupBtn = "";
                 if (g.leader === loggedUser || loggedUser === "bao211221") {
                     deleteGroupBtn = `<button class="btn-secondary" style="background:#ef4444; color:white; font-size:0.75rem; padding:4px; margin-top:6px;" onclick="deleteGroup(${idx})"><i class="fa-solid fa-trash"></i> Xóa nhóm này</button>`;
@@ -682,7 +683,7 @@
                         <p style="font-size:0.8rem; color: var(--text-sub); margin-top:4px;">${g.desc}</p>
                         <p style="font-size:0.75rem; margin-top:6px;"><strong>Thành viên (${g.members ? g.members.length : 1}):</strong> ${memsHtml}</p>
                         <div style="display:flex; gap:6px;">
-                            <button class="btn-secondary" style="font-size:0.75rem; padding:4px; margin-top:6px; flex:1;" onclick="addMemberToGroup(${idx})"><i class="fa-solid fa-user-plus"></i> Thêm thành viên / Mã mời</button>
+                            <button class="btn-secondary" style="font-size:0.75rem; padding:4px; margin-top:6px; flex:1;" onclick="addMemberToGroup(${idx})"><i class="fa-solid fa-user-plus"></i> Thêm thành viên</button>
                             ${deleteGroupBtn}
                         </div>
                     </div>`;
@@ -780,7 +781,7 @@
             box.innerHTML = '';
             chatHistory.forEach(c => {
                 let mediaHtml = '';
-                if(c.video) mediaHtml = `<br><video src="${c.video}" controls style="max-width:100%; max-height:150px; border-radius:4px; margin-top:4px;"></video>`;
+                if(c.video) mediaHtml = `<br><video src="${c.video}" controls playsinline webkit-playsinline style="max-width:100%; max-height:150px; border-radius:4px; margin-top:4px; background:#000;"></video>`;
                 else if(c.image) mediaHtml = `<br><img src="${c.image}" style="max-width:100%; max-height:150px; border-radius:4px; margin-top:4px;">`;
                 
                 let tagPriv = c.recipient !== "ALL" ? `<span style="color: #9333ea; font-size: 0.68rem;">[Riêng tư tới ${c.recipient}]</span>` : "";
@@ -796,7 +797,6 @@
             alert("Đã thêm lịch trình!");
         }
 
-        // Tự động khởi chạy xác thực Pi ngay khi tải trang
         window.onload = function() {
             initPiAuth();
             loadGroups();
