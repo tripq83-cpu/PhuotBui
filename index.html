@@ -80,7 +80,7 @@
             </button>
             <div class="online-badge-header" onclick="openOnlineUsersModal()"><i class="fa-solid fa-circle" style="font-size: 0.5rem; color: #34d399;"></i> <span id="online-count">18</span> online</div>
             <button class="user-btn" onclick="openLoginModal()">
-                <i class="fa-solid fa-user-check"></i> <span id="user-display-name">bao211221</span>
+                <i class="fa-solid fa-user-check"></i> <span id="user-display-name">Đang kết nối...</span>
             </button>
         </div>
     </header>
@@ -89,7 +89,7 @@
         <div class="widget-item" onclick="openWorldClockModal()"><i class="fa-solid fa-clock" style="color: var(--primary);"></i><span id="live-clock">--:--:--</span></div>
         <div class="widget-item"><i class="fa-solid fa-chart-line" style="color: #059669;"></i><span>Giá Pi: <strong id="pi-price-tag" style="color: #059669;">$0.0770</strong> (<span id="pi-sec">60s</span>)</span></div>
     </div>
-    <div class="container">
+        <div class="container">
         <!-- Tab 1: Bảng tin -->
         <div id="tab-feed" class="tab-content active">
             <div id="posts-feed-container"></div>
@@ -243,15 +243,13 @@
         </div>
     </div>
 
-    <!-- Modal Đăng nhập -->
+    <!-- Modal Tài Khoản & Đăng Xuất (Logout) -->
     <div class="modal" id="login-modal">
-        <div class="modal-card">
-            <h3 style="margin-bottom: 10px; font-size: 1rem; color: var(--primary);">Đăng Nhập Thành Viên</h3>
-            <input type="text" id="auth-username" placeholder="Tên đăng nhập...">
-            <input type="password" id="auth-password" placeholder="Mật khẩu...">
-            <button class="btn-primary" onclick="loginWithAccount()">Đăng Nhập</button>
-            <button class="btn-secondary" onclick="connectPiWallet()">Đăng nhập bằng Ví Pi</button>
-            <button class="btn-secondary" style="background: transparent; color: var(--text-sub);" onclick="closeModal('login-modal')">Đóng</button>
+        <div class="modal-card" style="text-align: center;">
+            <h3 style="margin-bottom: 10px; font-size: 1rem; color: var(--primary);">Tài Khoản Thành Viên</h3>
+            <p id="modal-current-user" style="font-size: 0.85rem; margin-bottom: 12px; font-weight: bold;">Đang tải...</p>
+            <button class="btn-primary" style="background: #ef4444; margin-bottom: 6px;" onclick="logoutPiUser()">Đăng Xuất (Logout)</button>
+            <button class="btn-secondary" onclick="closeModal('login-modal')">Đóng</button>
         </div>
     </div>
 
@@ -266,7 +264,7 @@
         <div class="nav-item" onclick="switchTab('chat', this)"><i class="fa-solid fa-comments"></i><span>Chat</span><span class="badge" id="badge-chat">1</span></div>
     </nav>
         <script>
-        let loggedUser = "bao211221";
+        let loggedUser = "Khách Pi";
         let lastTabId = "feed";
         let activeTabId = "feed";
 
@@ -281,6 +279,45 @@
             videos: [], likes: 152, comments: ["Cảnh đẹp quá anh ơi!"]
         }];
 
+        // Tự động kết nối Pi SDK khi mở app & nhận diện tài khoản mới
+        async function initPiAuth() {
+            try {
+                if (typeof Pi !== 'undefined') {
+                    await Pi.init({ version: "2.0", apiKey: "82whbncni0u42en2cirvedpeu5kfwti3cpky1tgltvjctvj1gnukmldkkq2ptrl" });
+                    const auth = await Pi.authenticate(['username'], function(error) {
+                        console.error(error);
+                    });
+                    if (auth && auth.user && auth.user.username) {
+                        loggedUser = auth.user.username;
+                    }
+                }
+            } catch(e) {
+                console.log("Chạy chế độ giả lập cục bộ");
+            }
+            if (!loggedUser || loggedUser === "Khách Pi") {
+                loggedUser = localStorage.getItem('phuotbui_logged_user') || "bao211221";
+            }
+            localStorage.setItem('phuotbui_logged_user', loggedUser);
+            document.getElementById('user-display-name').innerText = loggedUser;
+            checkAdminRole();
+            loadPosts();
+        }
+
+        // Cơ chế Đăng xuất (Logout) sạch sẽ
+        function logoutPiUser() {
+            localStorage.removeItem('phuotbui_logged_user');
+            loggedUser = "Khách Pi";
+            document.getElementById('user-display-name').innerText = "Đăng nhập";
+            closeModal('login-modal');
+            alert("Đã đăng xuất tài khoản thành công!");
+            location.reload();
+        }
+
+        function openLoginModal() {
+            document.getElementById('modal-current-user').innerText = `Tài khoản hiện tại: ${loggedUser}`;
+            document.getElementById('login-modal').classList.add('active');
+        }
+
         function logAction(actionStr) {
             let logs = JSON.parse(localStorage.getItem('phuotbui_admin_logs')) || [];
             logs.unshift({ time: new Date().toLocaleTimeString('vi-VN'), user: loggedUser, action: actionStr });
@@ -291,6 +328,24 @@
             const adminBtn = document.getElementById('admin-log-btn');
             if (loggedUser === "bao211221") adminBtn.style.display = "flex";
             else adminBtn.style.display = "none";
+        }
+
+        // Sửa lỗi nút Sao chép địa chỉ ví mượt mà 100%
+        function copyWalletAddress() {
+            const inputEl = document.getElementById('wallet-address-input');
+            inputEl.select();
+            inputEl.setSelectionRange(0, 99999);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(inputEl.value).then(() => {
+                    alert("Đã sao chép địa chỉ ví Quỹ thành công!");
+                }).catch(() => {
+                    document.execCommand('copy');
+                    alert("Đã sao chép địa chỉ ví Quỹ!");
+                });
+            } else {
+                document.execCommand('copy');
+                alert("Đã sao chép địa chỉ ví Quỹ!");
+            }
         }
 
         function switchTab(id, el) {
@@ -358,6 +413,7 @@
             reader.readAsDataURL(file);
         }
 
+        // Đảm bảo lưu bài đăng chuẩn xác vào localStorage
         function loadPosts() {
             let posts = JSON.parse(localStorage.getItem('phuotbui_posts'));
             if (!posts) { posts = defaultPosts; localStorage.setItem('phuotbui_posts', JSON.stringify(posts)); }
@@ -464,8 +520,8 @@
             if (hours < 24) return `${hours} giờ trước`;
             return `${Math.floor(hours / 24)} ngày trước`;
         }
-                </script>
-                    <script>
+        </script>
+            <script>
         let countdownSec = 60;
         async function fetchRealtimePiPrice() {
             try {
@@ -520,6 +576,7 @@
             modal.classList.add('active');
         }
 
+        // Bấm vào tên thành viên để nhắn tin riêng hoặc thêm vào nhóm
         function directChatWith(user) {
             closeModal('online-users-modal');
             switchTab('chat', document.querySelectorAll('.nav-item')[6]);
@@ -538,25 +595,29 @@
             let idx = parseInt(choice) - 1;
             if(!isNaN(idx) && groups[idx]) {
                 if(!groups[idx].members) groups[idx].members = [];
-                groups[idx].members.push(user);
-                localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
-                logAction(`Đã thêm ${user} vào nhóm ${groups[idx].name}`);
-                alert(`Đã thêm ${user} vào nhóm thành công!`);
-                loadGroups();
+                if(!groups[idx].members.includes(user)) {
+                    groups[idx].members.push(user);
+                    localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
+                    logAction(`Đã thêm ${user} vào nhóm ${groups[idx].name}`);
+                    alert(`Đã thêm ${user} vào nhóm thành công!`);
+                    loadGroups();
+                } else {
+                    alert("Thành viên này đã có trong nhóm!");
+                }
             }
         }
 
         function createGroup() {
             const name = document.getElementById('group-name').value;
-            const leader = document.getElementById('group-leader').value;
             const desc = document.getElementById('group-desc').value;
             if(!name) { alert("Nhập tên nhóm!"); return; }
             let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [];
-            groups.unshift({ name, leader: leader || loggedUser, desc, members: [leader || loggedUser] });
+            let leader = loggedUser || "bao211221";
+            groups.unshift({ name, leader: leader, desc, members: [leader] });
             localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
             logAction(`Đã tạo nhóm phượt mới: "${name}"`);
             alert("Đã tạo nhóm thành công!");
-            document.getElementById('group-name').value = ''; document.getElementById('group-leader').value = ''; document.getElementById('group-desc').value = '';
+            document.getElementById('group-name').value = ''; document.getElementById('group-desc').value = '';
             loadGroups();
         }
 
@@ -565,11 +626,32 @@
             if(!inputVal) return;
             let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [];
             if(!groups[gIndex].members) groups[gIndex].members = [];
-            groups[gIndex].members.push(inputVal);
-            localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
-            logAction(`Đã thêm thành viên/mã mời "${inputVal}" vào nhóm ${groups[gIndex].name}`);
-            loadGroups();
-            alert(`Đã kết nạp ${inputVal} vào nhóm thành công!`);
+            if(!groups[gIndex].members.includes(inputVal)) {
+                groups[gIndex].members.push(inputVal);
+                localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
+                logAction(`Đã thêm thành viên/mã mời "${inputVal}" vào nhóm ${groups[gIndex].name}`);
+                loadGroups();
+                alert(`Đã kết nạp ${inputVal} vào nhóm thành công!`);
+            } else {
+                alert("Thành viên/mã này đã có trong nhóm!");
+            }
+        }
+
+        // Chỉ Trưởng nhóm hoặc chủ sở hữu mới có quyền Xóa nhóm
+        function deleteGroup(gIndex) {
+            let groups = JSON.parse(localStorage.getItem('phuotbui_groups')) || [];
+            let targetGroup = groups[gIndex];
+            if (targetGroup.leader === loggedUser || loggedUser === "bao211221") {
+                if (confirm(`Bạn có chắc chắn muốn xóa nhóm "${targetGroup.name}" không?`)) {
+                    groups.splice(gIndex, 1);
+                    localStorage.setItem('phuotbui_groups', JSON.stringify(groups));
+                    logAction(`Đã xóa nhóm: "${targetGroup.name}"`);
+                    loadGroups();
+                    alert("Đã xóa nhóm thành công!");
+                }
+            } else {
+                alert("Chỉ có Trưởng nhóm mới có quyền xóa nhóm này!");
+            }
         }
 
         function loadGroups() {
@@ -580,14 +662,29 @@
             if(!container) return;
             container.innerHTML = '';
             groups.forEach((g, idx) => {
-                let memsHtml = g.members ? g.members.join(", ") : g.leader;
+                let memsHtml = "";
+                if (g.members) {
+                    memsHtml = g.members.map(m => `<span style="cursor:pointer; color:var(--primary); text-decoration:underline; margin-right:6px;" onclick="directChatWith('${m}')" title="Bấm để nhắn tin riêng">${m}</span>`).join(", ");
+                } else {
+                    memsHtml = g.leader;
+                }
+
+                // Kiểm tra quyền hiển thị nút Xóa nhóm (Chỉ Trưởng nhóm hoặc bao211221)
+                let deleteGroupBtn = "";
+                if (g.leader === loggedUser || loggedUser === "bao211221") {
+                    deleteGroupBtn = `<button class="btn-secondary" style="background:#ef4444; color:white; font-size:0.75rem; padding:4px; margin-top:6px;" onclick="deleteGroup(${idx})"><i class="fa-solid fa-trash"></i> Xóa nhóm này</button>`;
+                }
+
                 container.innerHTML += `
                     <div class="card" style="border-left: 4px solid var(--primary);">
                         <strong><i class="fa-solid fa-users-rectangle"></i> ${g.name}</strong>
                         <p style="font-size:0.75rem; color: var(--primary);">Trưởng nhóm: ${g.leader}</p>
                         <p style="font-size:0.8rem; color: var(--text-sub); margin-top:4px;">${g.desc}</p>
                         <p style="font-size:0.75rem; margin-top:6px;"><strong>Thành viên (${g.members ? g.members.length : 1}):</strong> ${memsHtml}</p>
-                        <button class="btn-secondary" style="font-size:0.75rem; padding:4px; margin-top:6px;" onclick="addMemberToGroup(${idx})"><i class="fa-solid fa-user-plus"></i> Thêm thành viên / Mã mời</button>
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn-secondary" style="font-size:0.75rem; padding:4px; margin-top:6px; flex:1;" onclick="addMemberToGroup(${idx})"><i class="fa-solid fa-user-plus"></i> Thêm thành viên / Mã mời</button>
+                            ${deleteGroupBtn}
+                        </div>
                     </div>`;
             });
         }
@@ -652,32 +749,6 @@
         }
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-        function openLoginModal() { document.getElementById('login-modal').classList.add('active'); }
-
-        function loginWithAccount() {
-            const u = document.getElementById('auth-username').value;
-            if(u) { 
-                loggedUser = u; document.getElementById('user-display-name').innerText = u; 
-                checkAdminRole(); closeModal('login-modal'); alert("Đăng nhập thành công!"); 
-            } else alert("Nhập tên tài khoản!");
-        }
-
-        async function connectPiWallet() {
-            try {
-                if (typeof Pi !== 'undefined') {
-                    await Pi.init({ version: "2.0", apiKey: "82whbncni0u42en2cirvedpeu5kfwti3cpky1tgltvjctvj1gnukmldkkq2ptrl" });
-                    const auth = await Pi.authenticate(['username'], function(){});
-                    loggedUser = auth.user.username; document.getElementById('user-display-name').innerText = loggedUser; 
-                    checkAdminRole(); closeModal('login-modal');
-                } else { 
-                    loggedUser = "bao211221"; document.getElementById('user-display-name').innerText = loggedUser; 
-                    checkAdminRole(); closeModal('login-modal'); 
-                }
-            } catch(e) { 
-                loggedUser = "bao211221"; document.getElementById('user-display-name').innerText = loggedUser; 
-                checkAdminRole(); closeModal('login-modal'); 
-            }
-        }
 
         function sendChatMessage() {
             const m = document.getElementById('chat-msg').value.trim();
@@ -725,9 +796,9 @@
             alert("Đã thêm lịch trình!");
         }
 
+        // Tự động khởi chạy xác thực Pi ngay khi tải trang
         window.onload = function() {
-            checkAdminRole();
-            loadPosts();
+            initPiAuth();
             loadGroups();
             loadFinance();
             loadChat();
