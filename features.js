@@ -63,10 +63,19 @@ function previewChatMedia(event) {
 
 function loadPosts() {
     let posts = JSON.parse(localStorage.getItem('phuotbui_posts'));
-    if (!posts) { posts = defaultPosts; localStorage.setItem('phuotbui_posts', JSON.stringify(posts)); }
+    if (!posts) { 
+        posts = defaultPosts; 
+        localStorage.setItem('phuotbui_posts', JSON.stringify(posts)); 
+    }
+    
+    // TỰ ĐỘNG LỌC BỎ / XÓA HẲN CÁC BÀI VIẾT CỦA "Tuấn" THEO YÊU CẦU
+    posts = posts.filter(p => !p.author.toLowerCase().includes("tuấn"));
+    localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
+
     const container = document.getElementById('posts-feed-container');
     if(!container) return;
     container.innerHTML = '';
+    
     posts.forEach((p, idx) => {
         let cHtml = '';
         if(p.comments && p.comments.length > 0) {
@@ -78,13 +87,12 @@ function loadPosts() {
         if(p.videos) p.videos.forEach(vid => { mediaHtml += `<video src="${vid}" controls playsinline webkit-playsinline class="post-video"></video>`; });
         mediaHtml += '</div>';
 
-        // CHỈ CHỦ SỞ HỮU APP (bao211221) HOẶC TÁC GIẢ BÀI VIẾT MỚI THẤY NÚT XÓA
+        // KIỂM TRA QUYỀN XÓA CHUẨN XÁC
         let deleteBtn = "";
         if (loggedUser === "bao211221" || p.author === loggedUser) {
             deleteBtn = `<button onclick="deletePost(${idx})" style="background:none; border:none; color:#ef4444; font-weight:bold; cursor:pointer; font-size:0.75rem;"><i class="fa-solid fa-trash"></i> Xóa bài</button>`;
         }
 
-        // KIỂM TRA XEM USER HIỆN TẠI ĐÃ THÍCH BÀI NÀY CHƯA
         let hasLiked = p.likedUsers && p.likedUsers.includes(loggedUser);
         let heartIconClass = hasLiked ? "fa-solid fa-heart" : "fa-regular fa-heart";
         let heartStyle = hasLiked ? "color: #ef4444;" : "";
@@ -159,7 +167,7 @@ function submitPost() {
 function deletePost(idx) {
     let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
     let target = posts[idx];
-    if (loggedUser === "bao211221" || target.author === loggedUser) {
+    if (loggedUser === "bao211221" || (target && target.author === loggedUser)) {
         if(confirm("Bạn có chắc chắn muốn xóa bài đăng này không?")) {
             posts.splice(idx, 1);
             localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
@@ -171,25 +179,22 @@ function deletePost(idx) {
     }
 }
 
-// LOGIC MỖI NGƯỜI CHỈ ĐƯỢC THÍCH 1 LẦN
 function likePost(idx) {
     let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
     if(!posts[idx].likedUsers) posts[idx].likedUsers = [];
     
     let userIdx = posts[idx].likedUsers.indexOf(loggedUser);
     if(userIdx === -1) {
-        // Chưa thích -> Thêm lượt thích
         posts[idx].likedUsers.push(loggedUser);
         posts[idx].likes = (posts[idx].likes || 0) + 1;
     } else {
-        // Đã thích rồi -> Bấm lần nữa là Hủy thích
         posts[idx].likedUsers.splice(userIdx, 1);
         posts[idx].likes = Math.max(0, (posts[idx].likes || 1) - 1);
     }
     
     localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
     loadPosts();
-}
+        }
 function addComment(idx) {
     const val = document.getElementById(`cmt-${idx}`).value.trim();
     if(!val) return;
@@ -433,4 +438,4 @@ function addTripSchedule() {
         listContainer.innerHTML = `<div class="card" style="border-left:4px solid var(--primary);"><strong>${t}</strong><p style="font-size:0.75rem; color:var(--primary);">Khởi hành: ${d}</p><p style="font-size:0.8rem;">${n || "Không có ghi chú."}</p></div>` + listContainer.innerHTML;
     }
     alert("Đã thêm lịch trình!");
-        }
+                                     }
