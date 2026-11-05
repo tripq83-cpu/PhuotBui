@@ -7,7 +7,7 @@ let defaultPosts = [{
     id: 1, author: "Tuấn Pioneer", location: "Sa Pa", timestamp: Date.now() - 300000,
     content: "Cung đường Ô Quy Hồ hôm nay mây vờn rất đẹp! Đã thanh toán Pi thử nghiệm.",
     images: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500"],
-    videos: [], likes: 152, comments: ["Cảnh đẹp quá anh ơi!"]
+    videos: [], likes: 152, likedUsers: [], comments: ["Cảnh đẹp quá anh ơi!"]
 }];
 
 function handleMultiplePostMedia(event) {
@@ -78,9 +78,16 @@ function loadPosts() {
         if(p.videos) p.videos.forEach(vid => { mediaHtml += `<video src="${vid}" controls playsinline webkit-playsinline class="post-video"></video>`; });
         mediaHtml += '</div>';
 
-        let deleteBtn = (p.author === loggedUser || loggedUser === "bao211221") 
-            ? `<button onclick="deletePost(${idx})" style="background:none; border:none; color:#ef4444; font-weight:bold; cursor:pointer; font-size:0.75rem;"><i class="fa-solid fa-trash"></i> Xóa bài</button>` 
-            : '';
+        // CHỈ CHỦ SỞ HỮU APP (bao211221) HOẶC TÁC GIẢ BÀI VIẾT MỚI THẤY NÚT XÓA
+        let deleteBtn = "";
+        if (loggedUser === "bao211221" || p.author === loggedUser) {
+            deleteBtn = `<button onclick="deletePost(${idx})" style="background:none; border:none; color:#ef4444; font-weight:bold; cursor:pointer; font-size:0.75rem;"><i class="fa-solid fa-trash"></i> Xóa bài</button>`;
+        }
+
+        // KIỂM TRA XEM USER HIỆN TẠI ĐÃ THÍCH BÀI NÀY CHƯA
+        let hasLiked = p.likedUsers && p.likedUsers.includes(loggedUser);
+        let heartIconClass = hasLiked ? "fa-solid fa-heart" : "fa-regular fa-heart";
+        let heartStyle = hasLiked ? "color: #ef4444;" : "";
 
         container.innerHTML += `
             <div class="card">
@@ -93,7 +100,7 @@ function loadPosts() {
                 </div>
                 <p style="font-size:0.85rem;">${p.content}</p>${mediaHtml}
                 <div class="post-actions">
-                    <span onclick="likePost(${idx})"><i class="fa-regular fa-heart"></i> ${p.likes} Thích</span>
+                    <span onclick="likePost(${idx})" style="cursor:pointer; ${heartStyle}"><i class="${heartIconClass}"></i> ${p.likes || 0} Thích</span>
                     <span><i class="fa-regular fa-comment"></i> ${p.comments ? p.comments.length : 0} Bình luận</span>
                     <span><i class="fa-solid fa-share"></i> Chia sẻ</span>
                 </div>
@@ -130,7 +137,8 @@ function submitPost() {
         content: `<strong>${title}</strong><br>${content}`, 
         images: imgs, 
         videos: vids, 
-        likes: 1, 
+        likes: 0, 
+        likedUsers: [],
         comments: [] 
     });
     
@@ -149,22 +157,39 @@ function submitPost() {
 }
 
 function deletePost(idx) {
-    if(confirm("Bạn có chắc chắn muốn xóa bài đăng này không?")) {
-        let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
-        posts.splice(idx, 1);
-        localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
-        if(typeof logAction === 'function') logAction(`Đã xóa bài viết index ${idx}`);
-        loadPosts();
+    let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
+    let target = posts[idx];
+    if (loggedUser === "bao211221" || target.author === loggedUser) {
+        if(confirm("Bạn có chắc chắn muốn xóa bài đăng này không?")) {
+            posts.splice(idx, 1);
+            localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
+            if(typeof logAction === 'function') logAction(`Đã xóa bài viết index ${idx}`);
+            loadPosts();
+        }
+    } else {
+        alert("Chỉ có chủ sở hữu app hoặc tác giả bài viết mới có quyền xóa!");
     }
 }
 
+// LOGIC MỖI NGƯỜI CHỈ ĐƯỢC THÍCH 1 LẦN
 function likePost(idx) {
     let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
-    posts[idx].likes += 1;
+    if(!posts[idx].likedUsers) posts[idx].likedUsers = [];
+    
+    let userIdx = posts[idx].likedUsers.indexOf(loggedUser);
+    if(userIdx === -1) {
+        // Chưa thích -> Thêm lượt thích
+        posts[idx].likedUsers.push(loggedUser);
+        posts[idx].likes = (posts[idx].likes || 0) + 1;
+    } else {
+        // Đã thích rồi -> Bấm lần nữa là Hủy thích
+        posts[idx].likedUsers.splice(userIdx, 1);
+        posts[idx].likes = Math.max(0, (posts[idx].likes || 1) - 1);
+    }
+    
     localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
     loadPosts();
 }
-
 function addComment(idx) {
     const val = document.getElementById(`cmt-${idx}`).value.trim();
     if(!val) return;
@@ -408,4 +433,4 @@ function addTripSchedule() {
         listContainer.innerHTML = `<div class="card" style="border-left:4px solid var(--primary);"><strong>${t}</strong><p style="font-size:0.75rem; color:var(--primary);">Khởi hành: ${d}</p><p style="font-size:0.8rem;">${n || "Không có ghi chú."}</p></div>` + listContainer.innerHTML;
     }
     alert("Đã thêm lịch trình!");
-}
+        }
