@@ -165,16 +165,16 @@ function submitPost() {
 }
 
 function deletePost(postId) {
+function deletePost(idx) {
     let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
-    let targetIndex = posts.findIndex(p => String(p.id) === String(postId));
+    let target = posts[idx];
     
-    if (targetIndex !== -1) {
-        let target = posts[targetIndex];
+    if (target) {
         if (loggedUser === "bao211221" || target.author === loggedUser) {
             if(confirm("Bạn có chắc chắn muốn xóa bài đăng này không?")) {
-                posts.splice(targetIndex, 1);
+                posts.splice(idx, 1);
                 localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
-                if(typeof logAction === 'function') logAction(`Đã xóa bài viết ID: ${postId}`);
+                if(typeof logAction === 'function') logAction(`Đã xóa bài viết index ${idx}`);
                 loadPosts();
                 alert("Đã xóa bài viết thành công!");
             }
@@ -184,8 +184,7 @@ function deletePost(postId) {
     } else {
         alert("Không tìm thấy bài viết để xóa!");
     }
-}
-
+}  
 function likePost(idx) {
     let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
     if(!posts[idx].likedUsers) posts[idx].likedUsers = [];
