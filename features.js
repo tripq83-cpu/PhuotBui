@@ -164,18 +164,25 @@ function submitPost() {
     alert("Đăng bài thành công! Đã chuyển về bảng tin.");
 }
 
-function deletePost(idx) {
+function deletePost(postId) {
     let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
-    let target = posts[idx];
-    if (loggedUser === "bao211221" || (target && target.author === loggedUser)) {
-        if(confirm("Bạn có chắc chắn muốn xóa bài đăng này không?")) {
-            posts.splice(idx, 1);
-            localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
-            if(typeof logAction === 'function') logAction(`Đã xóa bài viết index ${idx}`);
-            loadPosts();
+    let targetIndex = posts.findIndex(p => String(p.id) === String(postId));
+    
+    if (targetIndex !== -1) {
+        let target = posts[targetIndex];
+        if (loggedUser === "bao211221" || target.author === loggedUser) {
+            if(confirm("Bạn có chắc chắn muốn xóa bài đăng này không?")) {
+                posts.splice(targetIndex, 1);
+                localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
+                if(typeof logAction === 'function') logAction(`Đã xóa bài viết ID: ${postId}`);
+                loadPosts();
+                alert("Đã xóa bài viết thành công!");
+            }
+        } else {
+            alert("Chỉ có chủ sở hữu app hoặc tác giả bài viết mới có quyền xóa!");
         }
     } else {
-        alert("Chỉ có chủ sở hữu app hoặc tác giả bài viết mới có quyền xóa!");
+        alert("Không tìm thấy bài viết để xóa!");
     }
 }
 
