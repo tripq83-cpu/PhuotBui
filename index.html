@@ -1,1 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHƯỢT BỤI - Du Lịch Bụi Không Biên Giới</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="background:#f8fafc; font-family:sans-serif; margin:0; padding-bottom:70px;">
 
+    <!-- HEADER -->
+    <header style="background:#6366f1; color:white; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <h1 style="margin:0; font-size:1.1rem;"><i class="fa-solid fa-compass"></i> PHƯỢT BỤI</h1>
+            <p style="margin:0; font-size:0.7rem; opacity:0.9;">Du Lịch Bụi Không Biên Giới</p>
+        </div>
+        <div style="font-size:0.8rem; background:rgba(255,255,255,0.2); padding:4px 8px; border-radius:12px;">
+            <i class="fa-solid fa-user"></i> bao211221
+        </div>
+    </header>
+
+    <!-- NỘI DUNG BẢNG TIN -->
+    <div style="padding:12px;">
+        <div style="background:white; padding:12px; border-radius:8px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+            <h3 style="margin-top:0; font-size:0.95rem; color:#334155;"><i class="fa-solid fa-pen-to-square"></i> Đăng Bài Trải Nghiệm</h3>
+            <input type="text" id="post-title" placeholder="Tiêu đề bài viết..." style="width:100%; padding:8px; margin-bottom:8px; border:1px solid #cbd5e1; border-radius:4px; box-sizing:border-box;">
+            <input type="text" id="post-location" placeholder="Địa điểm (Ví dụ: Đà Nẵng)..." style="width:100%; padding:8px; margin-bottom:8px; border:1px solid #cbd5e1; border-radius:4px; box-sizing:border-box;">
+            <textarea id="post-content" placeholder="Nội dung chia sẻ..." style="width:100%; padding:8px; margin-bottom:8px; border:1px solid #cbd5e1; border-radius:4px; height:70px; box-sizing:border-box;"></textarea>
+            <button onclick="submitPost()" style="width:100%; background:#6366f1; color:white; border:none; padding:10px; border-radius:4px; font-weight:bold; cursor:pointer;">Đăng Bài Ngay</button>
+        </div>
+        
+        <div id="posts-feed-container"></div>
+    </div>
+
+    <!-- SCRIPT LIÊN KẾT -->
+    <script src="core.js"></script>
+    <script src="features.js"></script>
+</body>
+</html>
