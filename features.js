@@ -17,7 +17,6 @@ window.onload = function() {
 function loadPosts() {
     let posts = JSON.parse(localStorage.getItem('phuotbui_posts'));
     
-    // Nếu chưa có dữ liệu, tạo mẫu đúng chuẩn hình ảnh ban đầu
     if (!posts || posts.length === 0) {
         posts = [
             {
@@ -32,16 +31,6 @@ function loadPosts() {
                     { user: "Thành viên", text: "Okok" },
                     { user: "bao211221", text: "Okok" }
                 ]
-            },
-            {
-                id: "post_2",
-                author: "Tuấn Pioneer",
-                location: "Đà Nẵng",
-                timeText: "10 phút trước",
-                title: "Trải nghiệm mới",
-                content: "Chuyến đi thật tuyệt vời!",
-                likes: 2,
-                comments: []
             }
         ];
         localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
@@ -52,11 +41,13 @@ function loadPosts() {
     container.innerHTML = '';
     
     posts.forEach((p) => {
-        // Đảm bảo bài viết nào cũng có ID riêng
         if (!p.id) p.id = 'post_' + Date.now() + Math.floor(Math.random() * 1000);
         
+        // NÚT XÓA BÀI ĐƯỢC ÉP KIỂU NÚT THỰC SỰ - KHÔNG CHO BÔI ĐEN TEXT
         let deleteBtn = (loggedUser === "bao211221" || p.author === loggedUser || p.author === "Phượt Thủ") ? 
-            `<button onclick="deletePost('${p.id}')" style="background:none; border:none; color:#ef4444; font-weight:bold; cursor:pointer; font-size:0.8rem; margin-top:4px;"><i class="fa-solid fa-trash"></i> Xóa bài</button>` : "";
+            `<button type="button" onclick="deletePost('${p.id}')" style="background:#fee2e2; color:#ef4444; border:1px solid #fca5a5; padding:4px 8px; border-radius:4px; font-weight:bold; font-size:0.75rem; cursor:pointer; user-select:none; -webkit-user-select:none; display:inline-flex; align-items:center; gap:4px; margin-top:4px;">
+                <i class="fa-solid fa-trash"></i> Xóa bài
+            </button>` : "";
 
         let commentsHtml = '';
         if (p.comments && p.comments.length > 0) {
@@ -77,9 +68,9 @@ function loadPosts() {
 
                 <!-- TƯƠNG TÁC BAN ĐẦU -->
                 <div style="display:flex; gap:12px; font-size:0.85rem; font-weight:500; color:#1e293b; margin-bottom:6px;">
-                    <span onclick="likePost('${p.id}')" style="cursor:pointer;"><i class="fa-regular fa-heart"></i> ${p.likes || 0} Thích</span>
-                    <span style="cursor:pointer;"><i class="fa-regular fa-comment"></i> ${(p.comments ? p.comments.length : 0)} Bình luận</span>
-                    <span style="cursor:pointer;"><i class="fa-solid fa-share"></i> Chia sẻ</span>
+                    <span onclick="likePost('${p.id}')" style="cursor:pointer; user-select:none;"><i class="fa-regular fa-heart"></i> ${p.likes || 0} Thích</span>
+                    <span style="cursor:pointer; user-select:none;"><i class="fa-regular fa-comment"></i> ${(p.comments ? p.comments.length : 0)} Bình luận</span>
+                    <span style="cursor:pointer; user-select:none;"><i class="fa-solid fa-share"></i> Chia sẻ</span>
                 </div>
 
                 <!-- BÌNH LUẬN BAN ĐẦU -->
@@ -87,7 +78,7 @@ function loadPosts() {
                     ${commentsHtml}
                     <div style="margin-top:6px; display:flex; gap:4px;">
                         <input type="text" id="comment-input-${p.id}" placeholder="Viết bình luận..." style="font-size:0.8rem; padding:4px; border:1px solid #ccc; border-radius:3px; flex:1;">
-                        <button onclick="addComment('${p.id}')" style="font-size:0.8rem; padding:4px 8px; background:#f1f5f9; border:1px solid #ccc; border-radius:3px; cursor:pointer;">Gửi</button>
+                        <button type="button" onclick="addComment('${p.id}')" style="font-size:0.8rem; padding:4px 8px; background:#f1f5f9; border:1px solid #ccc; border-radius:3px; cursor:pointer;">Gửi</button>
                     </div>
                 </div>
             </div>`;
@@ -122,7 +113,7 @@ function submitPost() {
     loadPosts();
 }
 
-// XÓA BÀI CHUẨN 100% THEO ID (BẤM LÀ XÓA NGAY)
+// XÓA BÀI CHUẨN ĐÚNG NÚT BẤM
 function deletePost(postId) {
     if (confirm("Bạn có chắc chắn muốn xóa bài đăng này không?")) {
         let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
