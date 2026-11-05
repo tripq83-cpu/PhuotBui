@@ -1,11 +1,11 @@
-// --- MODULE PHƯỢT BỤI TỐI ƯU ---
+// --- MODULE BÀI VIẾT & XÓA BÀI ---
 let loggedUser = "bao211221";
 let selectedPostMedia = [];
 
 function loadPosts() {
     let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [{
         id: 1, author: "bao211221", location: "Đà Nẵng", timestamp: Date.now(),
-        content: "<strong>Chào mừng đến với Phượt Bụi</strong><br>Hệ thống đã sẵn sàng!",
+        content: "<strong>Chào mừng đến với Phượt Bụi</strong><br>Hệ thống đã sẵn sàng hoạt động!",
         images: [], videos: [], likes: 0, likedUsers: [], comments: []
     }];
     
@@ -33,7 +33,7 @@ function submitPost() {
     const loc = document.getElementById('post-location')?.value.trim() || "Việt Nam";
     const content = document.getElementById('post-content')?.value.trim() || "";
     
-    if(!title || !content) { alert("Nhập đủ tiêu đề và nội dung!"); return; }
+    if(!title || !content) { alert("Vui lòng nhập đủ tiêu đề và nội dung!"); return; }
     
     let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
     posts.unshift({
@@ -42,6 +42,8 @@ function submitPost() {
     });
     
     localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
+    if(document.getElementById('post-title')) document.getElementById('post-title').value = '';
+    if(document.getElementById('post-content')) document.getElementById('post-content').value = '';
     loadPosts();
     switchTab('feed');
     alert("Đăng bài thành công!");
