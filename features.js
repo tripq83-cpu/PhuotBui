@@ -1,11 +1,22 @@
-// --- MODULE BÀI VIẾT & XÓA BÀI ---
+// --- MODULE PHƯỢT BỤI AN TOÀN (CHỐNG TREO 100%) ---
 let loggedUser = "bao211221";
 let selectedPostMedia = [];
+
+// Hàm chuyển tab an toàn, không sợ bị treo
+window.switchTab = window.switchTab || function(tabName) {
+    try {
+        document.querySelectorAll('.tab-pane, .content-section, section').forEach(el => {
+            el.style.display = 'none';
+        });
+        const target = document.getElementById(tabName) || document.getElementById(tabName + '-tab');
+        if(target) target.style.display = 'block';
+    } catch(e) { console.log(e); }
+};
 
 function loadPosts() {
     let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [{
         id: 1, author: "bao211221", location: "Đà Nẵng", timestamp: Date.now(),
-        content: "<strong>Chào mừng đến với Phượt Bụi</strong><br>Hệ thống đã sẵn sàng hoạt động!",
+        content: "<strong>Chào mừng đến với Phượt Bụi</strong><br>Hệ thống đã hoạt động bình thường!",
         images: [], videos: [], likes: 0, likedUsers: [], comments: []
     }];
     
@@ -44,8 +55,9 @@ function submitPost() {
     localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
     if(document.getElementById('post-title')) document.getElementById('post-title').value = '';
     if(document.getElementById('post-content')) document.getElementById('post-content').value = '';
+    
     loadPosts();
-    switchTab('feed');
+    if(typeof window.switchTab === 'function') window.switchTab('feed');
     alert("Đăng bài thành công!");
 }
 
