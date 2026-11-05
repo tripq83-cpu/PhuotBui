@@ -1,4 +1,4 @@
-// --- MODULE TÍNH NĂNG HOÀN CHỈNH CHO PHƯỢT BỤI ---
+// --- MODULE TÍNH NĂNG HOÀN CHỈNH CHO PHƯỢT BỤI (PHẦN 1) ---
 
 let loggedUser = "bao211221";
 let onlineUsers = ["bao211221", "Tuấn Pioneer", "Giang My", "Hoàng Nam", "Lan Anh", "Phượt Thủ Sài Gòn", "Hùng Sa Pa"];
@@ -159,21 +159,6 @@ function submitPost() {
     alert("Đăng bài thành công! Đã chuyển về bảng tin.");
 }
 
-    
-    localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
-    if(typeof logAction === 'function') logAction(`Đã đăng bài viết mới: "${title}"`);
-    
-    if(titleEl) titleEl.value = ''; 
-    if(locEl) locEl.value = ''; 
-    if(contentEl) contentEl.value = '';
-    selectedPostMedia = []; 
-    renderPostMediaPreview();
-    
-    loadPosts();
-    switchTab('feed');
-    alert("Đăng bài thành công! Đã chuyển về bảng tin.");
-}
-
 function deletePost(idx) {
     let posts = JSON.parse(localStorage.getItem('phuotbui_posts')) || [];
     let target = posts[idx];
@@ -223,7 +208,9 @@ function addComment(idx) {
     localStorage.setItem('phuotbui_posts', JSON.stringify(posts));
     loadPosts();
 }
-    function openOnlineUsersModal() {
+// --- MODULE TÍNH NĂNG HOÀN CHỈNH CHO PHƯỢT BỤI (PHẦN 2) ---
+
+function openOnlineUsersModal() {
     const modal = document.getElementById('online-users-modal');
     const container = document.getElementById('online-users-list');
     if(!container || !modal) return;
@@ -429,4 +416,4 @@ function addTripSchedule() {
         listContainer.innerHTML = `<div class="card" style="background:white; border-radius:8px; padding:10px; margin-bottom:8px; border-left:4px solid var(--primary); box-shadow:0 1px 3px rgba(0,0,0,0.1);"><strong>${t}</strong><p style="font-size:0.75rem; color:var(--primary);">Khởi hành: ${d}</p><p style="font-size:0.8rem; margin-top:4px;">${n || "Không có ghi chú."}</p></div>` + listContainer.innerHTML;
     }
     alert("Đã thêm lịch trình!");
-}
+                         }
