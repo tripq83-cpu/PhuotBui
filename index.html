@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Phượt Bụi - Kết Nối Cộng Đồng</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Pi Network SDK -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { orange: '#FF6B35', dark: '#0F172A', card: '#1E293B', yellow: '#F59E0B', accent: '#10B981', purple: '#8B5CF6' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #0F172A; color: #F8FAFC; -webkit-tap-highlight-color: transparent; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="pb-24 pt-1 select-none">
+
+    <!-- Top Status Bar: Đồng hồ VN & Múi giờ thế giới -->
+    <div class="bg-slate-900 border-b border-slate-800 px-3 py-1 flex justify-between items-center text-[10px] text-slate-400 font-mono">
+        <div onclick="ClockModule.toggleWorldClocks()" class="cursor-pointer flex items-center space-x-1 bg-slate-800 px-2 py-0.5 rounded border border-slate-700 active:scale-95">
+            <span>🇻🇳 VN: <strong id="clock-vn" class="text-brand-orange">00:00:00</strong></span>
+            <i class="fa-solid fa-earth-americas text-sky-400"></i>
+        </div>
+        <div class="flex items-center space-x-2 text-[10px]">
+            <span><i class="fa-solid fa-eye text-sky-400"></i> <b id="stat-views" class="text-white">1,420</b></span>
+            <span><i class="fa-solid fa-circle text-emerald-500 text-[7px]"></i> <b id="stat-online" class="text-white">48</b></span>
+        </div>
+    </div>
+
+    <!-- Popup Múi Giờ Thế Giới -->
+    <div id="world-clock-popup" class="hidden fixed inset-x-0 top-8 z-50 px-4">
+        <div class="bg-brand-card border border-slate-700 rounded-xl p-3 shadow-2xl max-w-md mx-auto space-y-1.5 text-xs">
+            <div class="flex justify-between items-center font-bold text-white border-b border-slate-700 pb-1">
+                <span>🌐 5 Múi Giờ Thế Giới</span>
+                <button onclick="ClockModule.toggleWorldClocks()" class="text-slate-400">&times;</button>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-slate-300 pt-1 font-mono text-[11px]">
+                <div>🗽 New York: <span id="clock-ny" class="text-amber-400">--:--</span></div>
+                <div>🇬🇧 Luân Đôn: <span id="clock-london" class="text-amber-400">--:--</span></div>
+                <div>🇯🇵 Tokyo: <span id="clock-tokyo" class="text-amber-400">--:--</span></div>
+                <div>🇦🇺 Sydney: <span id="clock-sydney" class="text-amber-400">--:--</span></div>
+                <div>🇫🇷 Paris: <span id="clock-paris" class="text-amber-400">--:--</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 bg-brand-dark/95 backdrop-blur-md px-4 py-2 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-orange to-brand-yellow flex items-center justify-center text-white font-bold text-base shadow">
+                <i class="fa-solid fa-compass"></i>
+            </div>
+            <div>
+                <h1 class="font-extrabold text-sm text-white tracking-wide uppercase leading-tight">Phượt Bụi</h1>
+                <p class="text-[9px] text-brand-orange font-medium">Kết nối cộng đồng</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-1.5">
+            <button onclick="UIModule.openNotificationsModal()" class="relative p-2 text-slate-300">
+                <i class="fa-solid fa-bell text-sm"></i>
+                <span id="notif-badge" class="absolute top-1 right-1 w-2 h-2 bg-brand-orange rounded-full"></span>
+            </button>
+            <button onclick="UIModule.openChatModal()" class="relative p-2 text-slate-300">
+                <i class="fa-solid fa-comment-dots text-sm"></i>
+            </button>
+            <button id="auth-btn" onclick="PiAuthModule.login()" class="bg-gradient-to-r from-brand-orange to-amber-500 text-white font-bold px-2.5 py-1.5 rounded-xl text-xs flex items-center space-x-1 shadow">
+                <i class="fa-solid fa-wallet"></i>
+                <span id="auth-text">Ví Pi</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="px-4 max-w-md mx-auto space-y-3 mt-2.5">
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 p-3.5 shadow-xl">
+            <span class="bg-brand-orange/20 text-brand-orange text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider inline-block mb-1 border border-brand-orange/30">⚡ Pi Network Web3 App</span>
+            <h2 class="text-base font-black text-white leading-tight">KHÁM PHÁ CUNG ĐƯỜNG & TỪ THIỆN MINH BẠCH</h2>
+            <p class="text-[11px] text-slate-300 mt-1">Lên kế hoạch tự do, đặt cọc an toàn & đóng góp quỹ qua Pi.</p>
+            <div class="mt-2.5 flex space-x-2">
+                <button onclick="NavigationModule.switchTab('tours')" class="bg-brand-orange text-white text-[11px] font-bold px-3 py-1.5 rounded-xl shadow">Khám phá</button>
+                <button onclick="UIModule.openCreateModal()" class="bg-slate-800 text-slate-200 border border-slate-600 text-[11px] font-bold px-3 py-1.5 rounded-xl">+ Tạo chuyến</button>
+            </div>
+        </div>
+
+        <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+            <input type="text" id="search-input" oninput="PostModule.handleSearch(this.value)" placeholder="Tìm điểm đến, Tây Bắc, Hà Giang..." class="w-full bg-brand-card border border-slate-700 text-xs rounded-xl pl-8 pr-3 py-2 text-white placeholder-slate-400 focus:outline-none focus:border-brand-orange">
+        </div>
+
+        <!-- TAB 1: TOURS -->
+        <section id="tab-tours" class="tab-page space-y-3">
+            <h3 class="font-bold text-xs text-white flex items-center"><i class="fa-solid fa-fire text-brand-orange mr-1"></i> Danh Sách Chuyến Đi & Điểm Đến</h3>
+            <div id="posts-container" class="space-y-3"></div>
+        </section>
+
+        <!-- TAB 2: CHARITY -->
+        <section id="tab-charity" class="tab-page hidden space-y-3">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-xs text-white flex items-center"><i class="fa-solid fa-hand-holding-heart text-purple-400 mr-1"></i> Nhóm Từ Thiện</h3>
+                <button onclick="CharityGroupModule.openCreateGroupModal()" class="bg-purple-600 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold">+ Tạo Nhóm</button>
+            </div>
+            <div id="charity-groups-container" class="space-y-3"></div>
+        </section>
+
+        <!-- TAB 3: AI -->
+        <section id="tab-ai" class="tab-page hidden space-y-3">
+            <h3 class="font-bold text-xs text-white flex items-center"><i class="fa-solid fa-robot text-sky-400 mr-1"></i> Trợ Lý AI Du Lịch</h3>
+            <div class="bg-brand-card p-3.5 rounded-xl border border-slate-700 space-y-2.5">
+                <textarea id="ai-prompt" rows="2" placeholder="Ví dụ: Phượt Tây Bắc mùa lúa chín cần chuẩn bị gì?" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white placeholder-slate-500"></textarea>
+                <button onclick="AIModule.askAI()" class="w-full bg-sky-600 text-white font-bold py-2 rounded-xl text-xs">Tư vấn ngay</button>
+                <div id="ai-response" class="hidden bg-slate-900 p-2.5 rounded-lg border border-sky-500/30 text-xs text-slate-200"></div>
+            </div>
+        </section>
+
+        <!-- TAB 4: WALLET -->
+        <section id="tab-wallet" class="tab-page hidden space-y-3">
+            <h3 class="font-bold text-xs text-white flex items-center"><i class="fa-solid fa-wallet text-amber-400 mr-1"></i> Ví Pi & Quản Trị</h3>
+            <div class="bg-brand-card p-3.5 rounded-xl border border-amber-500/30 space-y-1.5 text-xs">
+                <p id="wallet-status" class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i>Đã sẵn sàng kết nối Pi SDK</p>
+                <p id="user-pi-id" class="text-slate-400 font-mono">User: Chưa xác thực</p>
+                <p id="admin-badge" class="hidden bg-brand-orange text-white px-2 py-0.5 rounded font-bold w-max text-[10px]">CHỦ APP / ADMIN</p>
+            </div>
+        </section>
+    </main>
+        <!-- MODALS -->
+    <div id="create-modal" class="fixed inset-0 z-50 bg-black/80 hidden flex items-center justify-center p-4">
+        <div class="bg-brand-card w-full max-w-sm rounded-2xl border border-slate-700 p-4 space-y-2.5 text-xs">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-2 font-bold text-white">
+                <span>Tạo Điểm Đến Mới</span>
+                <button onclick="UIModule.closeCreateModal()" class="text-base">&times;</button>
+            </div>
+            <input type="text" id="new-title" placeholder="Tiêu đề chuyến đi" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+            <input type="text" id="new-location" placeholder="Điểm đến (Ví dụ: Hà Giang, Đà Nẵng...)" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+            <select id="new-type" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                <option value="tour">🏕️ Chuyến Phượt / Tour</option>
+                <option value="charity">💖 Quỹ Từ Thiện</option>
+            </select>
+            <input type="number" step="0.1" id="new-price" placeholder="Tổng chi phí (Pi)" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+            <textarea id="new-content" rows="2" placeholder="Mô tả kế hoạch..." class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white"></textarea>
+            <button onclick="PostModule.submitNewPost()" class="w-full bg-brand-orange text-white font-bold py-2 rounded-xl">Đăng bài ngay</button>
+        </div>
+    </div>
+
+    <div id="booking-modal" class="fixed inset-0 z-50 bg-black/80 hidden flex items-center justify-center p-4">
+        <div class="bg-brand-card w-full max-w-sm rounded-2xl border border-slate-700 p-4 space-y-2.5 text-xs">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-2 font-bold text-white">
+                <span>Xác Nhận Đặt Tour & Thanh Toán Pi</span>
+                <button onclick="BookingModule.closeModal()" class="text-base">&times;</button>
+            </div>
+            <p id="bk-tour-title" class="text-brand-orange font-bold"></p>
+            <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 space-y-1.5">
+                <div class="flex justify-between text-slate-300"><span>Tổng giá:</span><strong id="bk-total-price" class="text-white font-mono">0 Pi</strong></div>
+                <div class="flex justify-between items-center text-slate-300"><span>Thanh toán:</span>
+                    <select id="bk-pay-type" onchange="BookingModule.updatePayType(this.value)" class="bg-slate-800 border border-slate-700 rounded p-1 text-white">
+                        <option value="deposit">Cọc trước 30%</option>
+                        <option value="full">Thanh toán toàn bộ</option>
+                    </select>
+                </div>
+                <div class="flex justify-between text-slate-300"><span id="bk-due-label">Cần trả ngay:</span><strong id="bk-due-amount" class="text-brand-orange font-mono">0 Pi</strong></div>
+                <div class="flex justify-between items-center text-slate-300"><span>Tiền Tip:</span><input type="number" step="0.1" id="bk-tip" value="0.0" oninput="BookingModule.updatePayType(document.getElementById('bk-pay-type').value)" class="w-14 bg-slate-800 border border-slate-700 rounded p-1 text-center text-white font-mono"></div>
+            </div>
+            <p class="text-[9px] text-slate-400">⚠️ Hủy tour sau khi đặt sẽ bị trừ phí 10%.</p>
+            <div class="flex space-x-2">
+                <button onclick="BookingModule.closeModal()" class="w-1/2 bg-slate-700 text-slate-200 py-2 rounded-xl font-bold">Hủy</button>
+                <button onclick="BookingModule.confirmPayment()" class="w-1/2 bg-brand-orange text-white py-2 rounded-xl font-bold shadow">Xác Nhận Ví Pi</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notifications-modal" class="fixed inset-0 z-50 bg-black/80 hidden flex items-center justify-center p-4">
+        <div class="bg-brand-card w-full max-w-sm rounded-2xl border border-slate-700 p-4 space-y-2.5 text-xs">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-2 font-bold text-white">
+                <span>Thông Báo Hoạt Động</span>
+                <button onclick="UIModule.closeNotificationsModal()" class="text-base">&times;</button>
+            </div>
+            <div id="notifications-list" class="space-y-1.5 max-h-48 overflow-y-auto text-slate-300"></div>
+        </div>
+    </div>
+
+    <div id="chat-modal" class="fixed inset-0 z-50 bg-black/80 hidden flex items-center justify-center p-4">
+        <div class="bg-brand-card w-full max-w-sm rounded-2xl border border-slate-700 p-4 space-y-2.5 text-xs">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-2 font-bold text-white">
+                <span>Tư Vấn Trực Tiếp</span>
+                <button onclick="UIModule.closeChatModal()" class="text-base">&times;</button>
+            </div>
+            <div id="chat-box" class="bg-slate-900 p-2.5 rounded-xl h-40 overflow-y-auto space-y-1.5 text-slate-300">
+                <div class="bg-slate-800 p-1.5 rounded">Xin chào! Bạn cần tư vấn lịch trình hay xe 7 chỗ không?</div>
+            </div>
+            <div class="flex space-x-1">
+                <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                <button onclick="ChatModule.sendMessage()" class="bg-emerald-600 text-white px-3 py-1.5 rounded font-bold"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="group-modal" class="fixed inset-0 z-50 bg-black/80 hidden flex items-center justify-center p-4">
+        <div class="bg-brand-card w-full max-w-sm rounded-2xl border border-slate-700 p-4 space-y-2.5 text-xs">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-2 font-bold text-white">
+                <span>Tạo Nhóm Từ Thiện</span>
+                <button onclick="CharityGroupModule.closeModal()" class="text-base">&times;</button>
+            </div>
+            <input type="text" id="group-name" placeholder="Tên nhóm (Ví dụ: Yêu thương Quảng Nam)" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+            <input type="text" id="group-desc" placeholder="Kế hoạch mục tiêu..." class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+            <button onclick="CharityGroupModule.submitGroup()" class="w-full bg-purple-600 text-white font-bold py-2 rounded-xl">Tạo Nhóm Ngay</button>
+        </div>
+    </div>
+
+    <div id="delete-modal" class="fixed inset-0 z-50 bg-black/80 hidden flex items-center justify-center p-4">
+        <div class="bg-brand-card w-full max-w-xs rounded-2xl border border-slate-700 p-4 space-y-2.5 text-center text-xs">
+            <div class="w-10 h-10 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto text-base"><i class="fa-solid fa-trash-can"></i></div>
+            <h3 class="font-bold text-white">Xác Nhận Xóa Bài</h3>
+            <p class="text-slate-300">Bạn có chắc muốn xóa bài đăng này không?</p>
+            <div class="flex space-x-2 pt-1">
+                <button onclick="PostModule.closeDeleteModal()" class="w-1/2 bg-slate-700 text-slate-200 py-2 rounded-xl font-bold">Không</button>
+                <button onclick="PostModule.confirmDeletePost()" class="w-1/2 bg-red-600 text-white py-2 rounded-xl font-bold">Xóa ngay</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-brand-dark/95 backdrop-blur-lg border-t border-slate-800 px-3 py-1.5">
+        <div class="max-w-md mx-auto flex justify-around items-center text-slate-400">
+            <button onclick="NavigationModule.switchTab('tours')" id="nav-tours" class="nav-item active flex flex-col items-center space-y-0.5 text-brand-orange">
+                <i class="fa-solid fa-motorcycle text-sm"></i><span class="text-[9px] font-semibold">Chuyến Đi</span>
+            </button>
+            <button onclick="NavigationModule.switchTab('charity')" id="nav-charity" class="nav-item flex flex-col items-center space-y-0.5 hover:text-slate-200">
+                <i class="fa-solid fa-hand-holding-heart text-sm"></i><span class="text-[9px] font-semibold">Từ Thiện</span>
+            </button>
+            <button onclick="NavigationModule.switchTab('ai')" id="nav-ai" class="nav-item flex flex-col items-center space-y-0.5 hover:text-slate-200">
+                <i class="fa-solid fa-robot text-sm"></i><span class="text-[9px] font-semibold">Trợ Lý AI</span>
+            </button>
+            <button onclick="NavigationModule.switchTab('wallet')" id="nav-wallet" class="nav-item flex flex-col items-center space-y-0.5 hover:text-slate-200">
+                <i class="fa-solid fa-wallet text-sm"></i><span class="text-[9px] font-semibold">Ví Pi</span>
+            </button>
+        </div>
+  </nav>
+      <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const ClockModule = {
+            toggleWorldClocks: () => document.getElementById('world-clock-popup').classList.toggle('hidden'),
+            init: function() {
+                setInterval(() => {
+                    const now = new Date();
+                    document.getElementById('clock-vn').innerText = new Intl.DateTimeFormat('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(now);
+                    document.getElementById('clock-ny').innerText = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
+                    document.getElementById('clock-london').innerText = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
+                    document.getElementById('clock-tokyo').innerText = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
+                    document.getElementById('clock-sydney').innerText = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
+                    document.getElementById('clock-paris').innerText = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
+                }, 1000);
+            }
+        };
+
+        const ADMIN_USERNAME = "tripq83";
+        let currentPiUser = null;
+
+        const PiAuthModule = {
+            initSDK: function() {
+                try { if (typeof Pi !== 'undefined') Pi.init({ version: "2.0", sandbox: true }); } catch (e) {}
+            },
+            login: function() {
+                if (typeof Pi !== 'undefined') {
+                    Pi.authenticate(['username', 'payments'], () => {}).then(auth => {
+                        currentPiUser = auth.user; PiAuthModule.updateUI();
+                    }).catch(() => alert("Hãy mở trong Pi Browser!"));
+                } else {
+                    currentPiUser = { username: ADMIN_USERNAME };
+                    PiAuthModule.updateUI();
+                    alert(`[Dev Mode] Đã kết nối ví: @${currentPiUser.username}`);
+                }
+            },
+            updateUI: function() {
+                document.getElementById('auth-text').innerText = `@${currentPiUser.username}`;
+                document.getElementById('user-pi-id').innerText = `User: @${currentPiUser.username}`;
+                document.getElementById('wallet-status').innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i>Đã kết nối ví: @${currentPiUser.username}`;
+                if (currentPiUser.username.toLowerCase() === ADMIN_USERNAME.toLowerCase()) {
+                    document.getElementById('admin-badge').classList.remove('hidden');
+                }
+                PostModule.renderPosts();
+            }
+        };
+
+        let postsData = [
+            {
+                id: 1, author: "tripq83", title: "Chinh Phục Tây Bắc Mùa Lúa Chín", location: "Hà Giang - Tây Bắc", type: "tour",
+                img: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=600&q=80", price: 6.0,
+                content: "Khám phá cung đường đèo hùng vĩ, xe 7 chỗ chất lượng cao.", likes: 12, likedByMe: false, comments: [{ user: "NamPhuoc", text: "Chuyến đi tuyệt vời!" }], charityRaised: 0
+            },
+            {
+                id: 2, author: "tripq83", title: "Quỹ Áo Ấm Vùng Cao Mùa Đông", location: "Quảng Nam", type: "charity",
+                img: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80", price: 1.5,
+                content: "Quyên góp áo ấm và thực phẩm cho trẻ em nghèo.", likes: 24, likedByMe: false, comments: [], charityRaised: 12.0
+            }
+        ];
+
+        let targetDeleteId = null;
+
+        const PostModule = {
+            renderPosts: function(keyword = '') {
+                const container = document.getElementById('posts-container');
+                container.innerHTML = '';
+                const filtered = postsData.filter(p => p.title.toLowerCase().includes(keyword.toLowerCase()) || p.location.toLowerCase().includes(keyword.toLowerCase()));
+
+                filtered.forEach(post => {
+                    const isAdmin = currentPiUser && currentPiUser.username.toLowerCase() === ADMIN_USERNAME.toLowerCase();
+                    const isAuthor = currentPiUser && currentPiUser.username.toLowerCase() === post.author.toLowerCase();
+                    const canDelete = isAdmin || isAuthor;
+
+                    const card = document.createElement('div');
+                    card.className = "bg-brand-card rounded-2xl overflow-hidden border border-slate-700 shadow-lg space-y-2";
+                    card.innerHTML = `
+                        <div class="relative h-36 bg-slate-700">
+                            <img src="${post.img}" class="w-full h-full object-cover">
+                            <span class="absolute top-2 left-2 bg-slate-900/80 text-slate-200 text-[10px] px-2 py-0.5 rounded font-semibold">📍 ${post.location}</span>
+                            <span class="absolute top-2 right-2 bg-brand-orange text-white text-xs font-extrabold px-2 py-0.5 rounded-full shadow">🪙 ${post.price} Pi</span>
+                        </div>
+                        <div class="p-3 space-y-2">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-xs text-white leading-snug">${post.title}</h4>
+                                ${canDelete ? `<button onclick="PostModule.openDeleteModal(${post.id})" class="text-red-400 text-xs pl-2"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                            </div>
+                            <p class="text-[11px] text-slate-300">${post.content}</p>
+                            ${post.type === 'charity' ? `<div class="bg-purple-900/40 border border-purple-500/30 p-2 rounded-xl flex justify-between items-center text-xs"><span class="text-purple-300 font-semibold">Quỹ Góp:</span><b class="text-brand-yellow font-mono">${post.charityRaised} Pi</b></div>` : ''}
+                            <div class="flex items-center justify-between text-xs text-slate-400 pt-1 border-t border-slate-700">
+                                <button onclick="PostModule.toggleLike(${post.id})" class="flex items-center space-x-1 ${post.likedByMe ? 'text-brand-orange font-bold' : 'hover:text-white'}"><i class="fa-solid fa-heart"></i> <span>${post.likes} Thích</span></button>
+                                <button onclick="UIModule.openChatModal()" class="text-sky-400 hover:underline"><i class="fa-solid fa-comment-dots mr-1"></i> Tư vấn</button>
+                            </div>
+                            <div class="space-y-1 pt-1">
+                                <div class="space-y-1 max-h-20 overflow-y-auto text-[10px]" id="comments-${post.id}">
+                                    ${post.comments.map(c => `<p class="bg-slate-900 p-1 rounded text-slate-300"><b>@${c.user}:</b> ${c.text}</p>`).join('')}
+                                </div>
+                                <div class="flex space-x-1 pt-1">
+                                    <input type="text" id="comment-input-${post.id}" placeholder="Viết bình luận..." class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[10px] text-white">
+                                    <button onclick="PostModule.addComment(${post.id})" class="bg-slate-700 text-white px-2 py-1 rounded text-[10px]">Gửi</button>
+                                </div>
+                            </div>
+                            <div class="pt-2 flex items-center justify-between border-t border-slate-700 text-xs">
+                                <span class="text-slate-400 text-[10px]">@${post.author}</span>
+                                ${post.type === 'charity' ? `<button onclick="BookingModule.openModal(${post.id}, true)" class="bg-purple-600 text-white font-bold px-2.5 py-1 rounded-lg text-xs">💖 Ủng Hộ</button>` : `<button onclick="BookingModule.openModal(${post.id}, false)" class="bg-brand-orange text-white font-bold px-2.5 py-1 rounded-lg text-xs">Đặt Tour</button>`}
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            },
+            handleSearch: keyword => PostModule.renderPosts(keyword),
+            toggleLike: function(id) {
+                const post = postsData.find(p => p.id === id);
+                if (post) { post.likedByMe = !post.likedByMe; post.likes += post.likedByMe ? 1 : -1; PostModule.renderPosts(document.getElementById('search-input').value); }
+            },
+            addComment: function(id) {
+                const input = document.getElementById(`comment-input-${id}`);
+                const text = input.value.trim();
+                if (!text) return;
+                const post = postsData.find(p => p.id === id);
+                if (post) {
+                    const username = currentPiUser ? currentPiUser.username : "Pioneer";
+                    post.comments.push({ user: username, text: text });
+                    input.value = '';
+                    PostModule.renderPosts(document.getElementById('search-input').value);
+                    NotificationModule.add(`@${username} đã bình luận bài viết.`);
+                }
+            },
+            openDeleteModal: id => { targetDeleteId = id; document.getElementById('delete-modal').classList.remove('hidden'); },
+            closeDeleteModal: () => { targetDeleteId = null; document.getElementById('delete-modal').classList.add('hidden'); },
+            confirmDeletePost: function() {
+                if (targetDeleteId) {
+                    postsData = postsData.filter(p => p.id !== targetDeleteId);
+                    PostModule.renderPosts();
+                    PostModule.closeDeleteModal();
+                    alert("Đã xóa bài đăng!");
+                }
+            },
+            submitNewPost: function() {
+                const title = document.getElementById('new-title').value.trim();
+                const location = document.getElementById('new-location').value.trim();
+                const type = document.getElementById('new-type').value;
+                const price = parseFloat(document.getElementById('new-price').value) || 1.0;
+                const content = document.getElementById('new-content').value.trim();
+                if (!title || !location || !content) { alert("Vui lòng điền đủ thông tin!"); return; }
+                postsData.unshift({
+                    id: Date.now(), author: currentPiUser ? currentPiUser.username : "Pioneer",
+                    title, location, type, img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",
+                    price, content, likes: 0, likedByMe: false, comments: [], charityRaised: 0
+                });
+                PostModule.renderPosts();
+                UIModule.closeCreateModal();
+                alert("Đăng bài thành công!");
+            }
+        };
+
+        let activeBookingPost = null;
+        const BookingModule = {
+            openModal: function(postId, isCharity) {
+                activeBookingPost = postsData.find(p => p.id === postId);
+                if (!activeBookingPost) return;
+                document.getElementById('bk-tour-title').innerText = activeBookingPost.title;
+                document.getElementById('bk-total-price').innerText = `${activeBookingPost.price} Pi`;
+                document.getElementById('bk-pay-type').value = isCharity ? 'full' : 'deposit';
+                BookingModule.updatePayType(document.getElementById('bk-pay-type').value);
+                document.getElementById('booking-modal').classList.remove('hidden');
+            },
+            closeModal: () => document.getElementById('booking-modal').classList.add('hidden'),
+            updatePayType: function(type) {
+                const tip = parseFloat(document.getElementById('bk-tip').value) || 0;
+                if (type === 'deposit') {
+                    document.getElementById('bk-due-label').innerText = "Cọc trước 30%:";
+                    document.getElementById('bk-due-amount').innerText = `${(activeBookingPost.price * 0.3 + tip).toFixed(1)} Pi`;
+                } else {
+                    document.getElementById('bk-due-label').innerText = "Thanh toán toàn bộ:";
+                    document.getElementById('bk-due-amount').innerText = `${(activeBookingPost.price + tip).toFixed(1)} Pi`;
+                }
+            },
+            confirmPayment: function() {
+                const tip = parseFloat(document.getElementById('bk-tip').value) || 0;
+                const type = document.getElementById('bk-pay-type').value;
+                const amount = type === 'deposit' ? (activeBookingPost.price * 0.3 + tip).toFixed(1) : (activeBookingPost.price + tip).toFixed(1);
+                if (typeof Pi !== 'undefined' && currentPiUser) {
+                    Pi.createPayment({ amount: parseFloat(amount), memo: `Thanh toán: ${activeBookingPost.title}` }, {
+                        onReadyForServerCompletion: () => BookingModule.handleSuccess(parseFloat(amount)),
+                        onCancel: () => alert("Hủy giao dịch."),
+                        onError: err => alert("Lỗi: " + err.message)
+                    });
+                } else {
+                    BookingModule.handleSuccess(parseFloat(amount));
+                }
+            },
+            handleSuccess: function(amt) {
+                if (activeBookingPost.type === 'charity') {
+                    activeBookingPost.charityRaised = (parseFloat(activeBookingPost.charityRaised) + amt).toFixed(1);
+                }
+                alert(`Thanh toán thành công ${amt} Pi!`);
+                NotificationModule.add(`Đã đặt chỗ thành công tour "${activeBookingPost.title}".`);
+                PostModule.renderPosts();
+                BookingModule.closeModal();
+            }
+        };
+
+        let notificationsData = ["Hệ thống: Chào mừng bạn đến với Phượt Bụi!", "Admin tripq83 đã kiểm duyệt điểm đến mới."];
+        const NotificationModule = {
+            add: function(msg) { notificationsData.unshift(msg); document.getElementById('notif-badge').classList.remove('hidden'); },
+            render: function() {
+                document.getElementById('notifications-list').innerHTML = notificationsData.map(n => `<div class="bg-slate-900 p-2 rounded text-slate-300">• ${n}</div>`).join('');
+            }
+        };
+
+        let charityGroups = [{ id: 1, name: "Biệt Đội Phượt Từ Thiện Miền Trung", desc: "Hỗ trợ quà vùng cao Nam Trà My", members: 16 }];
+        const CharityGroupModule = {
+            render: function() {
+                document.getElementById('charity-groups-container').innerHTML = charityGroups.map(g => `
+                    <div class="bg-brand-card p-3 rounded-xl border border-purple-500/30 space-y-2 text-xs">
+                        <div class="flex justify-between items-start"><h4 class="font-bold text-white">${g.name}</h4><span class="bg-purple-500/20 text-purple-300 text-[10px] px-2 py-0.5 rounded font-bold">${g.members} Thành viên</span></div>
+                        <p class="text-slate-300">${g.desc}</p>
+                        <div class="flex space-x-2 pt-1">
+                            <button onclick="alert('Đã tham gia nhóm!')" class="w-1/2 bg-purple-600 text-white font-bold py-1.5 rounded-lg">Tham gia</button>
+                            <button onclick="prompt('Mời thành viên qua mã:', 'PB-888')" class="w-1/2 bg-slate-700 text-slate-200 py-1.5 rounded-lg font-bold">Mời</button>
+                        </div>
+                    </div>
+                `).join('');
+            },
+            openCreateGroupModal: () => document.getElementById('group-modal').classList.remove('hidden'),
+            closeModal: () => document.getElementById('group-modal').classList.add('hidden'),
+            submitGroup: function() {
+                const name = document.getElementById('group-name').value.trim();
+                const desc = document.getElementById('group-desc').value.trim();
+                if (!name || !desc) { alert("Nhập đủ thông tin!"); return; }
+                charityGroups.push({ id: Date.now(), name, desc, members: 1 });
+                CharityGroupModule.render();
+                CharityGroupModule.closeModal();
+                alert("Tạo nhóm thành công!");
+            }
+        };
+
+        const ChatModule = {
+            sendMessage: function() {
+                const input = document.getElementById('chat-input');
+                const text = input.value.trim();
+                if (!text) return;
+                const box = document.getElementById('chat-box');
+                box.innerHTML += `<div class="bg-brand-orange/20 text-orange-200 p-1.5 rounded text-right"><b>Bạn:</b> ${text}</div>`;
+                input.value = '';
+                setTimeout(() => {
+                    box.innerHTML += `<div class="bg-slate-800 p-1.5 rounded text-slate-300"><b>Hỗ trợ:</b> Đã nhận yêu cầu, tôi sẽ liên hệ tư vấn ngay!</div>`;
+                    box.scrollTop = box.scrollHeight;
+                }, 1000);
+            }
+        };
+
+        const AIModule = {
+            askAI: function() {
+                const prompt = document.getElementById('ai-prompt').value.trim();
+                const box = document.getElementById('ai-response');
+                if (!prompt) { alert("Nhập câu hỏi cho AI!"); return; }
+                box.classList.remove('hidden');
+                box.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> AI đang phân tích...`;
+                setTimeout(() => {
+                    box.innerHTML = `<b>🤖 AI gợi ý:</b> Thời tiết đẹp, nên kiểm tra xe 7 chỗ, mang áo ấm và đặt lịch sớm qua ví Pi.`;
+                }, 1200);
+            }
+        };
+
+        const NavigationModule = {
+            switchTab: function(tabId) {
+                document.querySelectorAll('.tab-page').forEach(p => p.classList.add('hidden'));
+                document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('text-brand-orange'); n.classList.add('text-slate-400'); });
+                document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+                document.getElementById(`nav-${tabId}`).classList.add('text-brand-orange');
+            }
+        };
+
+        const UIModule = {
+            openCreateModal: () => document.getElementById('create-modal').classList.remove('hidden'),
+            closeCreateModal: () => document.getElementById('create-modal').classList.add('hidden'),
+            openNotificationsModal: () => { document.getElementById('notif-badge').classList.add('hidden'); NotificationModule.render(); document.getElementById('notifications-modal').classList.remove('hidden'); },
+            closeNotificationsModal: () => document.getElementById('notifications-modal').classList.add('hidden'),
+            openChatModal: () => document.getElementById('chat-modal').classList.remove('hidden'),
+            closeChatModal: () => document.getElementById('chat-modal').classList.add('hidden')
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            ClockModule.init();
+            PiAuthModule.initSDK();
+            PostModule.renderPosts();
+            CharityGroupModule.render();
+        });
+    </script>
+</body>
+</html>
