@@ -1,1 +1,368 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Phượt Bụi Không Biên Giới - Web3 Pi App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Pi Network SDK -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#FF6B35',
+                            dark: '#0F172A',
+                            card: '#1E293B',
+                            yellow: '#F59E0B',
+                            accent: '#10B981'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0F172A;
+            color: #F8FAFC;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="pb-24 pt-2 select-none">
 
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 bg-brand-dark/95 backdrop-blur-md px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-orange to-brand-yellow flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                <i class="fa-solid font-compass"></i>
+            </div>
+            <div>
+                <h1 class="font-extrabold text-lg text-white tracking-wide uppercase leading-tight">Phượt Bụi</h1>
+                <p class="text-xs text-brand-orange font-medium">Không Biên Giới • Web3 Pi</p>
+            </div>
+        </div>
+        <button id="auth-btn" onclick="authenticatePi()" class="bg-gradient-to-r from-brand-orange to-amber-500 hover:opacity-90 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-1.5 shadow-md transition active:scale-95">
+            <i class="fa-solid fa-wallet"></i>
+            <span id="auth-text">Kết nối Pi</span>
+        </button>
+    </header>
+
+    <!-- Main Content Area Container -->
+    <main class="px-4 max-w-md mx-auto space-y-5 mt-3">
+
+        <!-- Banner Chào Mừng -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 p-5 shadow-xl">
+            <div class="absolute -right-4 -bottom-4 w-28 h-28 bg-brand-orange/20 rounded-full blur-2xl"></div>
+            <span class="bg-brand-orange/20 text-brand-orange text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider inline-block mb-2 border border-brand-orange/30">⚡ Pioneer Community</span>
+            <h2 class="text-xl font-black text-white leading-tight">KHÁM PHÁ BẢN ĐỒ PHƯỢT BỤI & ĐẶT CHỖ BẰNG PI</h2>
+            <p class="text-xs text-slate-300 mt-1">Kết nối bạn đồng hành Đà Nẵng - Hội An - Huế - Tây Bắc. Thanh toán linh hoạt qua Ví Pi.</p>
+            <div class="mt-4 flex space-x-2">
+                <button onclick="switchTab('tours')" class="bg-brand-orange text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg flex items-center space-x-1 active:scale-95">
+                    <i class="fa-solid fa-map-location-dot mr-1"></i> Xem lộ trình ngay
+                </button>
+                <button onclick="openCreateModal()" class="bg-slate-800 text-slate-200 border border-slate-600 text-xs font-bold px-3 py-2.5 rounded-xl active:scale-95">
+                    + Tạo chuyến
+                </button>
+            </div>
+        </div>
+
+        <!-- SEARCH BAR & FILTER -->
+        <div class="space-y-2">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                <input type="text" placeholder="Tìm chuyến phượt Đà Nẵng, Hội An, Hà Giang..." class="w-full bg-brand-card border border-slate-700 text-sm rounded-xl pl-10 pr-4 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:border-brand-orange transition">
+            </div>
+            <!-- Category Chips -->
+            <div class="flex space-x-2 overflow-x-auto hide-scrollbar py-1 text-xs font-semibold">
+                <button class="bg-brand-orange text-white px-3.5 py-1.5 rounded-lg whitespace-nowrap shadow-sm">Tất cả</button>
+                <button class="bg-brand-card border border-slate-700 text-slate-300 px-3.5 py-1.5 rounded-lg whitespace-nowrap">🏖️ Đà Nẵng</button>
+                <button class="bg-brand-card border border-slate-700 text-slate-300 px-3.5 py-1.5 rounded-lg whitespace-nowrap">🏮 Hội An</button>
+                <button class="bg-brand-card border border-slate-700 text-slate-300 px-3.5 py-1.5 rounded-lg whitespace-nowrap">🏰 Huế</button>
+                <button class="bg-brand-card border border-slate-700 text-slate-300 px-3.5 py-1.5 rounded-lg whitespace-nowrap">🏞️ Tây Bắc</button>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT: CHUYẾN ĐI (TOURS) -->
+        <section id="tab-tours" class="tab-page space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-base text-white flex items-center">
+                    <i class="fa-solid fa-fire text-brand-orange mr-2"></i> Chuyến Đi Nổi Bật
+                </h3>
+                <span class="text-xs text-slate-400">Cập nhật liên tục</span>
+            </div>
+
+            <!-- Tour Card 1 -->
+            <div class="bg-brand-card rounded-2xl overflow-hidden border border-slate-700/80 shadow-lg group">
+                <div class="relative h-44 bg-slate-700">
+                    <img src="https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=600&q=80" alt="Hải Vân Pass" class="w-full h-full object-cover">
+                    <span class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md text-slate-200 text-xs px-2.5 py-1 rounded-md font-semibold">📍 Đà Nẵng - Thừa Thiên Huế</span>
+                    <span class="absolute top-3 right-3 bg-brand-orange text-white text-xs font-extrabold px-3 py-1 rounded-full shadow">🪙 4.5 Pi</span>
+                </div>
+                <div class="p-4 space-y-2">
+                    <h4 class="font-bold text-base text-white group-hover:text-brand-orange transition">Săn Mây Đèo Hải Vân & Khám Phá Lập An</h4>
+                    <p class="text-xs text-slate-300 line-clamp-2">Trải nghiệm cung đèo hùng vĩ nhất Miền Trung bằng xe máy / ô tô 7 chỗ, thưởng thức hải sản Đầm Lập An.</p>
+                    <div class="pt-2 flex items-center justify-between border-t border-slate-700 text-xs text-slate-400">
+                        <span><i class="fa-solid fa-clock text-amber-500 mr-1"></i>1 Ngày</span>
+                        <span><i class="fa-solid fa-user-group text-emerald-500 mr-1"></i>Còn 3 chỗ</span>
+                        <button onclick="requestPayment(4.5, 'Săn Mây Đèo Hải Vân')" class="bg-gradient-to-r from-brand-orange to-amber-500 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow hover:opacity-90 active:scale-95">Đặt bằng Pi</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tour Card 2 -->
+            <div class="bg-brand-card rounded-2xl overflow-hidden border border-slate-700/80 shadow-lg group">
+                <div class="relative h-44 bg-slate-700">
+                    <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80" alt="Hội An Ancient Town" class="w-full h-full object-cover">
+                    <span class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md text-slate-200 text-xs px-2.5 py-1 rounded-md font-semibold">📍 Quảng Nam</span>
+                    <span class="absolute top-3 right-3 bg-brand-orange text-white text-xs font-extrabold px-3 py-1 rounded-full shadow">🪙 3.0 Pi</span>
+                </div>
+                <div class="p-4 space-y-2">
+                    <h4 class="font-bold text-base text-white group-hover:text-brand-orange transition">Night Tour Hội An & Đi Thuyền Đèn Lồng</h4>
+                    <p class="text-xs text-slate-300 line-clamp-2">Dạo phố cổ đêm, thả hoa đăng trên sông Hoài, thưởng thức Cao Lầu & Mì Quảng chính gốc.</p>
+                    <div class="pt-2 flex items-center justify-between border-t border-slate-700 text-xs text-slate-400">
+                        <span><i class="fa-solid fa-clock text-amber-500 mr-1"></i>Buổi tối</span>
+                        <span><i class="fa-solid fa-user-group text-emerald-500 mr-1"></i>Còn 5 chỗ</span>
+                        <button onclick="requestPayment(3.0, 'Night Tour Hội An')" class="bg-gradient-to-r from-brand-orange to-amber-500 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow hover:opacity-90 active:scale-95">Đặt bằng Pi</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB CONTENT: BẠN PHƯỢT (COMMUNITY) -->
+        <section id="tab-community" class="tab-page hidden space-y-3">
+            <h3 class="font-bold text-base text-white flex items-center">
+                <i class="fa-solid fa-comments text-brand-yellow mr-2"></i> Cộng Đồng Ghép Kèo
+            </h3>
+            
+            <!-- Post 1 -->
+            <div class="bg-brand-card p-4 rounded-xl border border-slate-700 space-y-2">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center font-bold text-xs text-white">NV</div>
+                    <div>
+                        <p class="text-xs font-bold text-white">Nguyễn Văn Nam <span class="text-brand-orange font-normal">• Pioneer Đà Nẵng</span></p>
+                        <p class="text-[10px] text-slate-400">10 phút trước</p>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-200">Cuối tuần này mình dự định lái xe từ Đà Nẵng ra Huế ăn cơm hến rồi về trong ngày. Cần tìm thêm 2 bạn phượt ghép chung xe 7 chỗ cho vui! Chi phí chia Pi bằng nhau.</p>
+                <div class="flex items-center justify-between pt-2 border-t border-slate-700/50 text-xs text-slate-400">
+                    <button class="hover:text-brand-orange"><i class="fa-regular fa-thumbs-up mr-1"></i>12 Thích</button>
+                    <button onclick="alert('Đã gửi yêu cầu kết nối tới Pioneer!')" class="text-brand-orange font-semibold"><i class="fa-solid fa-paper-plane mr-1"></i>Nhắn tin ghép kèo</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB CONTENT: BẢN ĐỒ LỘ TRÌNH (MAP) -->
+        <section id="tab-map" class="tab-page hidden space-y-3">
+            <h3 class="font-bold text-base text-white flex items-center">
+                <i class="fa-solid fa-map-marked-alt text-emerald-400 mr-2"></i> Lộ Trình Khuyên Dùng
+            </h3>
+            <div class="bg-brand-card p-4 rounded-xl border border-slate-700 space-y-3">
+                <div class="space-y-2">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-6 h-6 rounded-full bg-brand-orange text-white flex items-center justify-center font-bold text-xs mt-0.5">1</div>
+                        <div>
+                            <h4 class="text-xs font-bold text-white">Xuất phát: Trung tâm Đà Nẵng</h4>
+                            <p class="text-[11px] text-slate-300">Ăn sáng bún chả cá, chuẩn bị xe máy/ô tô.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="w-6 h-6 rounded-full bg-brand-yellow text-white flex items-center justify-center font-bold text-xs mt-0.5">2</div>
+                        <div>
+                            <h4 class="text-xs font-bold text-white">Chinh phục đỉnh Hải Vân Quan</h4>
+                            <p class="text-[11px] text-slate-300">Dừng chân chụp hình săn mây, uống cà phê view biển.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs mt-0.5">3</div>
+                        <div>
+                            <h4 class="text-xs font-bold text-white">Đến Huế & Thưởng thức ẩm thực</h4>
+                            <p class="text-[11px] text-slate-300">Ghé Đầm Lập An, Bún Bò Huế, Đại Nội.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB CONTENT: VÍ & ĐƠN HÀNG (WALLET) -->
+        <section id="tab-wallet" class="tab-page hidden space-y-3">
+            <h3 class="font-bold text-base text-white flex items-center">
+                <i class="fa-solid fa-wallet text-purple-400 mr-2"></i> Ví Pi & Đơn Đã Đặt
+            </h3>
+            <div class="bg-gradient-to-br from-purple-900/50 to-brand-card p-4 rounded-xl border border-purple-500/30 space-y-2">
+                <p class="text-xs text-slate-300">Trạng thái tài khoản</p>
+                <p id="wallet-status" class="text-sm font-bold text-emerald-400"><i class="fa-solid fa-circle-check mr-1"></i>Đã sẵn sàng kết nối Pi SDK</p>
+                <p id="user-pi-id" class="text-xs text-slate-400 font-mono">User: Chưa đăng nhập</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Nút Nổi (FAB) Tạo Chuyến Phượt -->
+    <button onclick="openCreateModal()" class="fixed right-4 bottom-20 z-40 bg-gradient-to-r from-brand-orange to-amber-500 text-white w-12 h-12 rounded-full shadow-2xl flex items-center justify-center text-xl active:scale-95 border-2 border-white/20">
+        <i class="fa-solid fa-plus"></i>
+    </button>
+        <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-brand-dark/95 backdrop-blur-lg border-t border-slate-800 px-4 py-2">
+        <div class="max-w-md mx-auto flex justify-around items-center text-slate-400">
+            <button onclick="switchTab('tours')" id="nav-tours" class="nav-item active flex flex-col items-center space-y-1 text-brand-orange">
+                <i class="fa-solid fa-motorcycle text-lg"></i>
+                <span class="text-[10px] font-semibold">Chuyến Đi</span>
+            </button>
+            <button onclick="switchTab('community')" id="nav-community" class="nav-item flex flex-col items-center space-y-1 hover:text-slate-200">
+                <i class="fa-solid fa-users text-lg"></i>
+                <span class="text-[10px] font-semibold">Bạn Phượt</span>
+            </button>
+            <button onclick="switchTab('map')" id="nav-map" class="nav-item flex flex-col items-center space-y-1 hover:text-slate-200">
+                <i class="fa-solid fa-route text-lg"></i>
+                <span class="text-[10px] font-semibold">Bản Đồ</span>
+            </button>
+            <button onclick="switchTab('wallet')" id="nav-wallet" class="nav-item flex flex-col items-center space-y-1 hover:text-slate-200">
+                <i class="fa-solid fa-wallet text-lg"></i>
+                <span class="text-[10px] font-semibold">Ví Pi</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MODAL THANH TOÁN PI -->
+    <div id="payment-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-brand-card w-full max-w-sm rounded-2xl border border-slate-700 p-5 space-y-4 text-center">
+            <div class="w-14 h-14 bg-brand-orange/20 text-brand-orange rounded-full flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-coins"></i>
+            </div>
+            <h3 class="font-bold text-lg text-white">Xác Nhận Thanh Toán Pi</h3>
+            <p id="pay-tour-name" class="text-xs text-slate-300 font-medium">Cung đường Hải Vân Săn Mây</p>
+            <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                <span class="text-xs text-slate-400">Tổng tiền:</span>
+                <p id="pay-amount" class="text-2xl font-black text-brand-orange">4.5 Pi</p>
+            </div>
+            <div class="flex space-x-2 pt-2">
+                <button onclick="closePaymentModal()" class="w-1/2 bg-slate-700 text-slate-200 py-2.5 rounded-xl text-xs font-bold">Hủy</button>
+                <button onclick="executePiPayment()" class="w-1/2 bg-brand-orange text-white py-2.5 rounded-xl text-xs font-bold shadow hover:opacity-90">Xác Nhận Ví Pi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Handling -->
+    <script>
+        // Pi Network SDK Initialization
+        let currentPiUser = null;
+        let selectedPayAmount = 0;
+        let selectedTourTitle = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                if (typeof Pi !== 'undefined') {
+                    Pi.init({ version: "2.0", sandbox: true });
+                    console.log("Pi SDK initialized successfully.");
+                }
+            } catch (err) {
+                console.log("Running in standard browser mode.");
+            }
+        });
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-page').forEach(page => page.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                nav.classList.remove('text-brand-orange');
+                nav.classList.add('text-slate-400');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            activeNav.classList.remove('text-slate-400');
+            activeNav.classList.add('text-brand-orange');
+        }
+
+        // Pi Authentication
+        function authenticatePi() {
+            if (typeof Pi !== 'undefined') {
+                const scopes = ['username', 'payments'];
+                Pi.authenticate(scopes, onIncompletePaymentFound)
+                    .then(function(auth) {
+                        currentPiUser = auth.user;
+                        document.getElementById('auth-text').innerText = auth.user.username;
+                        document.getElementById('user-pi-id').innerText = `User: ${auth.user.username}`;
+                        document.getElementById('wallet-status').innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i>Đã kết nối: @${auth.user.username}`;
+                        alert(`Chào mừng Pioneer @${auth.user.username} đã kết nối!`);
+                    })
+                    .catch(function(error) {
+                        console.error(error);
+                        alert("Không thể kết nối ví Pi. Đảm bảo bạn mở app trong Pi Browser!");
+                    });
+            } else {
+                // Demo Fallback Mode
+                currentPiUser = { username: "PhuotBuiPioneer" };
+                document.getElementById('auth-text').innerText = "@PhuotBuiPioneer";
+                document.getElementById('user-pi-id').innerText = `User: PhuotBuiPioneer (Demo Mode)`;
+                alert("Đã kết nối tài khoản thử nghiệm (Demo Mode)!");
+            }
+        }
+
+        function onIncompletePaymentFound(payment) {
+            console.log("Incomplete payment found:", payment);
+        }
+
+        // Payment Process
+        function requestPayment(amount, tourTitle) {
+            selectedPayAmount = amount;
+            selectedTourTitle = tourTitle;
+            document.getElementById('pay-tour-name').innerText = tourTitle;
+            document.getElementById('pay-amount').innerText = `${amount} Pi`;
+            document.getElementById('payment-modal').classList.remove('hidden');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').classList.add('hidden');
+        }
+
+        function executePiPayment() {
+            if (typeof Pi !== 'undefined' && currentPiUser) {
+                Pi.createPayment({
+                    amount: selectedPayAmount,
+                    memo: `Đặt chuyến: ${selectedTourTitle}`,
+                    metadata: { tour: selectedTourTitle }
+                }, {
+                    onReadyForServerApproval: function(paymentId) {
+                        console.log("Ready for approval:", paymentId);
+                    },
+                    onReadyForServerCompletion: function(paymentId, txid) {
+                        alert(`Thanh toán thành công ${selectedPayAmount} Pi! TxID: ${txid}`);
+                        closePaymentModal();
+                    },
+                    onCancel: function(paymentId) {
+                        alert("Đã hủy giao dịch.");
+                        closePaymentModal();
+                    },
+                    onError: function(error, payment) {
+                        alert("Lỗi thanh toán: " + error.message);
+                        closePaymentModal();
+                    }
+                });
+            } else {
+                alert(`[DEMO SUCCESS] Đã thanh toán thành công ${selectedPayAmount} Pi cho chuyến "${selectedTourTitle}"!`);
+                closePaymentModal();
+            }
+        }
+
+        function openCreateModal() {
+            alert("Tính năng đăng chuyến phượt mới dành cho thành viên cộng đồng đang được khởi tạo!");
+        }
+    </script>
+</body>
+</html>
