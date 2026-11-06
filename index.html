@@ -761,6 +761,32 @@
             }
         };
 
+                const AIModule = {
+            askAI: function() {
+                const prompt = document.getElementById('ai-prompt').value.trim();
+                const box = document.getElementById('ai-response');
+                if (!prompt) { alert("Vui lòng nhập câu hỏi cho AI!"); return; }
+                box.classList.remove('hidden');
+                box.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> AI đang phân tích dữ liệu mùa du lịch...`;
+                setTimeout(() => {
+                    box.innerHTML = `<b>🤖 Trợ Lý AI gợi ý:</b> Thời điểm này cung đường bạn hỏi thời tiết rất đẹp, tuy nhiên nên kiểm tra kỹ xe 7 chỗ, mang theo áo ấm và đặt phòng sớm để có giá tốt nhất qua ví Pi.`;
+                }, 1200);
+            }
+        };
+
+        /* 8. ĐIỀU HƯỚNG TAB & MODAL CHUNG */
+        const NavigationModule = {
+            switchTab: function(tabId) {
+                document.querySelectorAll('.tab-page').forEach(p => p.classList.add('hidden'));
+                document.querySelectorAll('.nav-item').forEach(n => {
+                    n.classList.remove('text-brand-orange');
+                    n.classList.add('text-slate-400');
+                });
+                document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+                document.getElementById(`nav-${tabId}`).classList.add('text-brand-orange');
+            }
+        };
+
         const UIModule = {
             openCreateModal: () => document.getElementById('create-modal').classList.remove('hidden'),
             closeCreateModal: () => document.getElementById('create-modal').classList.add('hidden'),
